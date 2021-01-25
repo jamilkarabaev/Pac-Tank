@@ -45,7 +45,7 @@ class Pacman(pygame.sprite.Sprite):
             elif self.speed_x < 0:
                 self.rect.left = block.rect.right
 
-player = Pacman(0,0)
+player = Pacman(40,40)
 pacman_group.add(player)
         
 class Wall(pygame.sprite.Sprite):
