@@ -88,13 +88,17 @@ while not done:
                 player.speed_x = 0
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 player.speed_y = 0
+
+    player.update() 
     
     screen.fill(WHITE)
     sprites_group.draw(screen)
     walls_group.draw(screen)
     ghosts_group.draw(screen)
     powerups_group.draw(screen)
-    pacman_group.draw(screen)   
+    pacman_group.draw(screen)  
+
+
 
 
 
