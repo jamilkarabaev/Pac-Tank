@@ -20,6 +20,8 @@ powerups_group = pygame.sprite.Group()
 class Pacman(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([40,40])
+        self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -28,14 +30,74 @@ class Pacman(pygame.sprite.Sprite):
         self.health = 100
         self.score = 0
         self.damage = 100
+
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+
+player = Pacman(0,0)
+pacman_group.add(player)
         
 class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([40,40])
+        self.image.fill(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.image = pygame.Surface([40,40])
-        self.image.fill(BLACK)
-        
-                
+
+
+
+Maps = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+
+done = False
+clock = pygame.time.Clock()
+
+while not done:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                player.speed_x = -5
+            elif event.key == pygame.K_RIGHT:
+                player.speed_x = 5
+            elif event.key == pygame.K_UP:
+                player.speed_y = -5
+            elif event.key == pygame.K_DOWN:
+                player.speed_y = 5
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                player.speed_x = 0
+            elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                player.speed_y = 0
+    
+    screen.fill(WHITE)
+    sprites_group.draw(screen)
+    walls_group.draw(screen)
+    ghosts_group.draw(screen)
+    powerups_group.draw(screen)
+    pacman_group.draw(screen)   
+
+
+
+    pygame.display.flip()
+    clock.tick(60)
+pygame.quit()
