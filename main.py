@@ -17,11 +17,12 @@ ghosts_group = pygame.sprite.Group()
 walls_group = pygame.sprite.Group()
 powerups_group = pygame.sprite.Group()
 
+pacman_image = pygame.image.load('pacman_sprite.png')
+
 class Pacman(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([40,40])
-        self.image.fill(GREEN)
+        self.image = pacman_image
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -75,9 +76,9 @@ Maps = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1],
         [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-        [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
-        [1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1],
+        [1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1],
         [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
