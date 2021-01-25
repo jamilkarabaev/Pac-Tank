@@ -99,8 +99,9 @@ for y in range(len(Maps)):
 
 for y in range(4):
     for x in range(4):
-        cagewall = GhostCageWall((x*40)+220, (y*40)+320)
-        walls_group.add(cagewall)
+        if (x==0 or x==3) and (y==0 or y==3):
+            cagewall = GhostCageWall((x*40)+220, (y*40)+220)
+            walls_group.add(cagewall)
 
 
 
