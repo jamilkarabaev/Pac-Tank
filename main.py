@@ -33,7 +33,17 @@ class Pacman(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speed_x
+        self.collide_x(walls_group)
         self.rect.y += self.speed_y
+
+
+    def collide_x(self, sprite_group):
+        block_hit_list = pygame.sprite.spritecollide(self, sprite_group, False)
+        for block in block_hit_list:
+            if self.speed_x > 0:
+                self.rect.right = block.rect.left
+            elif self.speed_x < 0:
+                self.rect.left = block.rect.right
 
 player = Pacman(0,0)
 pacman_group.add(player)
