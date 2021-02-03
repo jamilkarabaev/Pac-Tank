@@ -18,6 +18,7 @@ walls_group = pygame.sprite.Group()
 powerups_group = pygame.sprite.Group()
 
 pacman_image = pygame.image.load('pac-png.png')
+cells = pygame.image.load('cells.png')
 
 class Pacman(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -73,10 +74,16 @@ class GhostCageWall(Wall):
         Wall.__init__(self, x, y)
         self.image.fill(BLUE)
 
+class CageDoor(Wall):
+    def __init__(self, x, y):
+        Wall.__init__(self, x ,y)
+        self.image = cells
+        
 
 
-Maps = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+
+Maps = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
         [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
@@ -89,15 +96,18 @@ Maps = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
         [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
         [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1]]
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 for y in range(len(Maps)):
-    for x in range(len(Maps)):
+    for x in range(len(Maps)+1):
         if Maps[y][x] == 1:
             wall = Wall(x*40, y*40)
             walls_group.add(wall)
-        if Maps[y][x] == 2:
+        elif Maps[y][x] == 2:
             wall = GhostCageWall(x*40, y*40)
+            walls_group.add(wall)
+        elif Maps[y][x] == 3:
+            wall = CageDoor(x*40, y*40)
             walls_group.add(wall)
 
 
