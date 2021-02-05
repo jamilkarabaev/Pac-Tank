@@ -1,5 +1,7 @@
 import pygame
 import random
+import time
+
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -19,6 +21,7 @@ powerups_group = pygame.sprite.Group()
 
 pacman_image = pygame.image.load('pac-png.png')
 cells = pygame.image.load('cells.png')
+speed_power_up_image = pygame.image.load('speed_power_up.png')
 
 class Pacman(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -78,6 +81,36 @@ class CageDoor(Wall):
     def __init__(self, x, y):
         Wall.__init__(self, x ,y)
         self.image = cells
+
+class PowerUp(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([40,40])
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.consumed = False
+    
+
+    def update(self):
+        self.check_if_consumed(pacman_group)
+
+    def check_if_consumed(self, sprite_group):
+        block_hit_list = pygame.sprite.spritecollide(self, sprite_group, False)
+        if block_hit_list:
+            self.consumed = True
+            self.kill()
+
+class SpeedPowerUp(PowerUp):
+    def __init__(self, x, y):
+        PowerUp.__init__(self, x, y)
+        self.image = speed_power_up_image
+
+
+speed_obj = SpeedPowerUp(40,80)
+powerups_group.add(speed_obj)
+
         
 
 
@@ -137,7 +170,8 @@ while not done:
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 player.speed_y = 0
 
-    player.update() 
+    player.update()
+    powerups_group.update()
     
     screen.fill(WHITE)
     sprites_group.draw(screen)
