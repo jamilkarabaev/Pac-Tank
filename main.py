@@ -101,6 +101,8 @@ class PowerUp(pygame.sprite.Sprite):
         if block_hit_list:
             self.consumed = True
             self.kill()
+            player.speed_x *= 2
+            player.speed_y *= 2
 
 class SpeedPowerUp(PowerUp):
     def __init__(self, x, y):
