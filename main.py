@@ -21,11 +21,27 @@ walls_group = pygame.sprite.Group()
 powerups_group = pygame.sprite.Group()
 pacdots_group = pygame.sprite.Group()
 gun_power_up_group = pygame.sprite.Group()
+bullet_group = pygame.sprite.Group()
 
 pacman_image = pygame.image.load('pac-png.png')
 cells = pygame.image.load('cells.png')
 speed_power_up_image = pygame.image.load('speed_power_up.png')
 gun_power_up_image = pygame.image.load('gun_power_up_image.png')
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([4,4])
+        self.image.fill(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 4
+    
+    def update(self):
+        self.rect.x += self.speed
+
+
 
 class Pacman(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -89,6 +105,14 @@ class Pacman(pygame.sprite.Sprite):
             self.start_time_gun_powerup = pygame.time.get_ticks()
             for block in block_hit_list:
                 block.kill()
+
+    def check_to_shoot(self):
+        if self.gun_power_up_consumed == True:
+            self.create_bullet(self.rect.x, self.rect.y)
+        
+    def create_bullet(self, x, y):
+        bullet = Bullet(x, y+15)
+        bullet_group.add(bullet)
             
             
 
@@ -99,6 +123,10 @@ class Pacman(pygame.sprite.Sprite):
         font = pygame.font.SysFont("serif", 25)
         score = font.render("score: " + str(self.score), True, BLACK)
         screen.blit(score, [10, 650])
+        if self.gun_power_up_consumed:
+            seconds = (self.end_time - self.start_time_gun_powerup)/1000
+            score = font.render("time-remaining: " + str(5-seconds), True, BLACK)
+            screen.blit(score, [10, 750])
     
 
 
@@ -123,6 +151,7 @@ class CageDoor(Wall):
     def __init__(self, x, y):
         Wall.__init__(self, x ,y)
         self.image = cells
+
 
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -255,18 +284,20 @@ while not done:
             done = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
+                player.speed_y = 0
                 player.speed_x = -5
             elif event.key == pygame.K_RIGHT:
+                player.speed_y = 0
                 player.speed_x = 5
             elif event.key == pygame.K_UP:
+                player.speed_x = 0
                 player.speed_y = -5
             elif event.key == pygame.K_DOWN:
-                player.speed_y = 5
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player.speed_x = 0
-            elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                player.speed_y = 0
+                player.speed_y = 5
+            elif event.key == pygame.K_SPACE:
+                player.check_to_shoot()
+
     
     screen.fill(WHITE)
     player.update()
@@ -279,6 +310,8 @@ while not done:
     pacman_group.draw(screen)  
     pacdots_group.draw(screen)
     gun_power_up_group.draw(screen)
+    bullet_group.draw(screen)
+    bullet_group.update()
 
 
 
