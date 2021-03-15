@@ -106,7 +106,7 @@ class Pacman(pygame.sprite.Sprite):
             for block in block_hit_list:
                 block.kill()
 
-    def check_to_shoot(self):
+    def shoot(self):
         if self.gun_power_up_consumed == True:
             self.create_bullet(self.rect.x, self.rect.y)
         
@@ -296,8 +296,9 @@ while not done:
                 player.speed_x = 0
                 player.speed_y = 5
             elif event.key == pygame.K_SPACE:
-                player.check_to_shoot()
-
+                player.shoot()
+            elif event.key == pygame.K_ESCAPE:
+                pygame.quit()
     
     screen.fill(WHITE)
     player.update()
