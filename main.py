@@ -22,10 +22,11 @@ powerups_group = pygame.sprite.Group()
 pacdots_group = pygame.sprite.Group()
 gun_power_up_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
+speed_powerups_group = pygame.sprite.Group()
 
 pacman_image = pygame.image.load('pac-png.png')
 cells = pygame.image.load('cells.png')
-speed_power_up_image = pygame.image.load('speed_power_up.png')
+speed_power_up_image = pygame.image.load('speed_power_up_1.png')
 gun_power_up_image = pygame.image.load('gun_power_up_image.png')
 
 class Bullet(pygame.sprite.Sprite):
@@ -58,7 +59,9 @@ class Pacman(pygame.sprite.Sprite):
         self.score = 0
         self.gun_power_up_consumed = False
         self.start_time_gun_powerup = None
+        self.start_time_speed_powerup = None
         self.end_time = None
+        self.speed_powerup_incrementer = 0
 
     def update(self):
         self.end_time= pygame.time.get_ticks()
@@ -66,15 +69,18 @@ class Pacman(pygame.sprite.Sprite):
             seconds = (self.end_time - self.start_time_gun_powerup)/1000
             if seconds >= 5:
                 self.gun_power_up_consumed = False
-                
-
+        if self.start_time_speed_powerup is not None:
+            seconds = (self.end_time - self.start_time_speed_powerup)/1000
+            if seconds >= 5:
+                self.speed_powerup_incrementer = 0
         
-        self.rect.x += self.speed_x
+        self.rect.x += self.speed_x + self.speed_powerup_incrementer
         self.collide_x(walls_group)
-        self.rect.y += self.speed_y
+        self.rect.y += self.speed_y + self.speed_powerup_incrementer
         self.collide_y(walls_group)
-        self.score_check()
-        self.collision_check()
+        self.collision_check(pacdots_group)
+        self.collision_check(gun_power_up_group)
+        self.collision_check(speed_powerups_group)
         self.display_score()
         
     def collide_x(self, sprite_group):
@@ -93,20 +99,24 @@ class Pacman(pygame.sprite.Sprite):
             elif self.speed_y < 0:
                 self.rect.top = block.rect.bottom
 
-    def score_check(self):
-        block_hit_list = pygame.sprite.spritecollide(self, pacdots_group, False)
-        if block_hit_list:
-            self.score += 1
 
-    def collision_check(self):
-        block_hit_list = pygame.sprite.spritecollide(self, gun_power_up_group, False)
+    def collision_check(self, group_type):
+        block_hit_list = pygame.sprite.spritecollide(self, group_type, False)
         if block_hit_list:
-            self.gun_power_up_consumed = True
-            self.start_time_gun_powerup = pygame.time.get_ticks()
-            for block in block_hit_list:
-                block.kill()
+            if group_type == gun_power_up_group:
+                self.gun_power_up_consumed = True
+                self.start_time_gun_powerup = pygame.time.get_ticks()
+            if group_type == pacdots_group:
+                self.score += 1
+            if group_type == speed_powerups_group:
+                self.speed_powerup_incrementer  = 10
+                self.gun_power_up_consumed = True
+                self.start_speed_powerup = pygame.time.get_ticks()
+        for block in block_hit_list:
+            block.kill()
 
-    def shoot(self):
+
+    def shoot_if_gun_powerup_consumed(self):
         if self.gun_power_up_consumed == True:
             self.create_bullet(self.rect.x, self.rect.y)
         
@@ -114,10 +124,7 @@ class Pacman(pygame.sprite.Sprite):
         bullet = Bullet(x, y+15)
         bullet_group.add(bullet)
             
-            
-
-
-
+        
 
     def display_score(self):
         font = pygame.font.SysFont("serif", 25)
@@ -162,37 +169,23 @@ class PowerUp(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.consumed = False
-    
-
-    def update(self):
-        self.check_if_consumed(pacman_group)
-
-    def check_if_consumed(self, sprite_group):
-        block_hit_list = pygame.sprite.spritecollide(self, sprite_group, False)
-        if block_hit_list:
-            self.consumed = True
-            self.kill()
-            player.speed_x *= 2
-            player.speed_y *= 2
 
 class SpeedPowerUp(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
         self.image = speed_power_up_image
 
-
-
 # class InvisibilityPowerUp(PowerUp):
 #     def __init__(self, x, y):
 #         PowerUp.__init__(self, x, y)
 #         self.image = 
 
-class GunPowerUp(PowerUp):
+class Bullets(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y) 
         self.image = gun_power_up_image
 
-gun_power_up_sprite = GunPowerUp(450,45)
+gun_power_up_sprite = Bullets(450,45)
 gun_power_up_group.add(gun_power_up_sprite)
 
 
@@ -235,8 +228,8 @@ pacdots_group.add(sample_pac_dot1)
 pacdots_group.add(sample_pac_dot2)
 
 
-speed_obj = SpeedPowerUp(40,80)
-powerups_group.add(speed_obj)
+speed_obj = SpeedPowerUp(40,40)
+speed_powerups_group.add(speed_obj)
 
         
 
@@ -296,7 +289,7 @@ while not done:
                 player.speed_x = 0
                 player.speed_y = 5
             elif event.key == pygame.K_SPACE:
-                player.shoot()
+                player.shoot_if_gun_powerup_consumed()
             elif event.key == pygame.K_ESCAPE:
                 pygame.quit()
     
@@ -310,6 +303,7 @@ while not done:
     powerups_group.draw(screen)
     pacman_group.draw(screen)  
     pacdots_group.draw(screen)
+    speed_powerups_group.draw(screen)
     gun_power_up_group.draw(screen)
     bullet_group.draw(screen)
     bullet_group.update()
