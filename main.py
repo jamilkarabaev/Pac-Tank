@@ -53,9 +53,6 @@ class Pacman(pygame.sprite.Sprite):
         self.rect.y = y
         self.speed_x = 0
         self.speed_y = 0
-        self.health = 100
-        self.score = 0
-        self.damage = 100
         self.score = 0
         self.gun_power_up_consumed = False
         self.start_time_gun_powerup = None
@@ -73,10 +70,21 @@ class Pacman(pygame.sprite.Sprite):
             seconds = (self.end_time - self.start_time_speed_powerup)/1000
             if seconds >= 5:
                 self.speed_powerup_incrementer = 0
+
+        if self.speed_powerup_incrementer != 0:
+            if self.speed_x == 5:
+                self.speed_x += self.speed_powerup_incrementer
+            elif self.speed_y == 5:
+                self.speed_y += self.speed_powerup_incrementer
+            elif self.speed_x == -5:
+                self.speed_x -= self.speed_powerup_incrementer
+            elif self.speed_y == -5:
+                self.speed_y -= self.speed_powerup_incrementer
+            
         
-        self.rect.x += self.speed_x + self.speed_powerup_incrementer
+        self.rect.x += self.speed_x
         self.collide_x(walls_group)
-        self.rect.y += self.speed_y + self.speed_powerup_incrementer
+        self.rect.y += self.speed_y
         self.collide_y(walls_group)
         self.collision_check(pacdots_group)
         self.collision_check(gun_power_up_group)
@@ -109,22 +117,16 @@ class Pacman(pygame.sprite.Sprite):
             if group_type == pacdots_group:
                 self.score += 1
             if group_type == speed_powerups_group:
-                self.speed_powerup_incrementer  = 10
-                self.gun_power_up_consumed = True
-                self.start_speed_powerup = pygame.time.get_ticks()
+                self.speed_powerup_incrementer = 10
+                self.start_time_speed_powerup = pygame.time.get_ticks()
         for block in block_hit_list:
             block.kill()
 
 
     def shoot_if_gun_powerup_consumed(self):
         if self.gun_power_up_consumed == True:
-            self.create_bullet(self.rect.x, self.rect.y)
-        
-    def create_bullet(self, x, y):
-        bullet = Bullet(x, y+15)
-        bullet_group.add(bullet)
-            
-        
+            bullet = Bullet(x, y+15)
+            bullet_group.add(bullet)
 
     def display_score(self):
         font = pygame.font.SysFont("serif", 25)
@@ -134,10 +136,13 @@ class Pacman(pygame.sprite.Sprite):
             seconds = (self.end_time - self.start_time_gun_powerup)/1000
             score = font.render("time-remaining: " + str(5-seconds), True, BLACK)
             screen.blit(score, [10, 750])
-    
+        if self.speed_powerup_incrementer != 0:
+            seconds = (self.end_time - self.start_time_speed_powerup)/1000
+            score = font.render("time-remaining: " + str(5-seconds), True, BLACK)
+            screen.blit(score, [10, 600])   
 
 
-player = Pacman(40,40)
+player = Pacman(40,80)
 pacman_group.add(player)
         
 class Wall(pygame.sprite.Sprite):
@@ -197,15 +202,7 @@ class PacDot(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.score_increment_value = 1
-
-    def remove_on_pickup(self):
-        block_hit_list = pygame.sprite.spritecollide(self, pacman_group, False)
-        if block_hit_list:
-            self.kill()
-
-    def update(self):
-        self.remove_on_pickup()
+        self.score_increment_value = 1  
 
 class Fruit(PacDot):
     def __init__(self, x, y):
@@ -228,7 +225,7 @@ pacdots_group.add(sample_pac_dot1)
 pacdots_group.add(sample_pac_dot2)
 
 
-speed_obj = SpeedPowerUp(40,40)
+speed_obj = SpeedPowerUp(40,120)
 speed_powerups_group.add(speed_obj)
 
         
@@ -296,7 +293,6 @@ while not done:
     screen.fill(WHITE)
     player.update()
     powerups_group.update()
-    pacdots_group.update()
     sprites_group.draw(screen)
     walls_group.draw(screen)
     ghosts_group.draw(screen)
