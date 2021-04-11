@@ -15,7 +15,7 @@ size = (640, 800)
 screen = pygame.display.set_mode(size)
 
 sprites_group = pygame.sprite.Group()
-pacman_group = pygame.sprite.Group()
+pactank_group = pygame.sprite.Group()
 ghosts_group = pygame.sprite.Group()
 walls_group = pygame.sprite.Group()
 powerups_group = pygame.sprite.Group()
@@ -25,7 +25,10 @@ bullet_group = pygame.sprite.Group()
 speed_powerups_group = pygame.sprite.Group()
 
 
-pac_tank_sprite = pygame.image.load('sprites\green_tank_sprite.png')
+green_tank_right_sprite = pygame.image.load('sprites\green_tank_right_sprite.png')
+green_tank_down_sprite = pygame.image.load('sprites\green_tank_down_sprite.png')
+green_tank_left_sprite = pygame.image.load('sprites\green_tank_left_sprite.png')
+green_tank_up_sprite = pygame.image.load('sprites\green_tank_up_sprite.png')
 ghost_sprite = pygame.image.load('sprites\pink_ghost_sprite.png')
 speed_powerup_sprite = pygame.image.load('sprites\speed_powerup_sprite.png')
 bullets_powerup_sprite = pygame.image.load('sprites\_bullets_powerup_sprite.png')
@@ -37,7 +40,6 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = single_bullet_sprite
-        self.image.fill(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -45,13 +47,15 @@ class Bullet(pygame.sprite.Sprite):
     
     def update(self):
         self.rect.x += self.speed
+ 
 
 
-
-class Pacman(pygame.sprite.Sprite):
+class PacTank(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pac_tank_sprite
+        self.images = [green_tank_right_sprite, green_tank_down_sprite, green_tank_left_sprite, green_tank_up_sprite]
+        self.image_index = 0
+        self.image = self.get_image()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -64,8 +68,16 @@ class Pacman(pygame.sprite.Sprite):
         self.start_time_speed_powerup = None
         self.end_time = None
         self.speed_powerup_incrementer = 0
+    
+    def set_image(self, index):
+        self.image_index = index
+
+    def get_image(self):
+        return self.images[self.image_index]
+
 
     def update(self):
+        self.image = self.get_image()
         self.end_time= pygame.time.get_ticks()
         if self.start_time_gun_powerup is not None:
             seconds = (self.end_time - self.start_time_gun_powerup)/1000
@@ -76,14 +88,22 @@ class Pacman(pygame.sprite.Sprite):
             if seconds >= 5:
                 self.speed_powerup_incrementer = 0
 
-        if self.speed_powerup_incrementer != 0:
-            if self.speed_x == 5:
+
+        if self.speed_x == 5:
+            self.set_image(0)
+            if self.speed_powerup_incrementer != 0:
                 self.speed_x += self.speed_powerup_incrementer
-            elif self.speed_y == 5:
+        elif self.speed_y == 5:
+            self.set_image(1)
+            if self.speed_powerup_incrementer != 0:
                 self.speed_y += self.speed_powerup_incrementer
-            elif self.speed_x == -5:
+        elif self.speed_x == -5:
+            self.set_image(2)
+            if self.speed_powerup_incrementer != 0:
                 self.speed_x -= self.speed_powerup_incrementer
-            elif self.speed_y == -5:
+        elif self.speed_y == -5:
+            self.set_image(3)
+            if self.speed_powerup_incrementer != 0:
                 self.speed_y -= self.speed_powerup_incrementer
             
         
@@ -130,7 +150,7 @@ class Pacman(pygame.sprite.Sprite):
 
     def shoot_if_gun_powerup_consumed(self):
         if self.gun_power_up_consumed == True:
-            bullet = Bullet(x, y+20)
+            bullet = Bullet(self.rect.x + 20, self.rect.y + 18)
             bullet_group.add(bullet)
 
     def display_score(self):
@@ -149,8 +169,8 @@ class Pacman(pygame.sprite.Sprite):
             screen.blit(score, [10, 600])   
 
 
-player = Pacman(40,80)
-pacman_group.add(player)
+player = PacTank(40,80)
+pactank_group.add(player)
         
 class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -303,7 +323,7 @@ while not done:
     walls_group.draw(screen)
     ghosts_group.draw(screen)
     powerups_group.draw(screen)
-    pacman_group.draw(screen)  
+    pactank_group.draw(screen)  
     pacdots_group.draw(screen)
     speed_powerups_group.draw(screen)
     gun_power_up_group.draw(screen)
