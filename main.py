@@ -24,15 +24,19 @@ gun_power_up_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 speed_powerups_group = pygame.sprite.Group()
 
-pacman_image = pygame.image.load('pac-png.png')
-cells = pygame.image.load('cells.png')
-speed_power_up_image = pygame.image.load('speed_power_up_1.png')
-gun_power_up_image = pygame.image.load('gun_power_up_image.png')
+
+pac_tank_sprite = pygame.image.load('sprites\green_tank_sprite.png')
+ghost_sprite = pygame.image.load('sprites\pink_ghost_sprite.png')
+speed_powerup_sprite = pygame.image.load('sprites\speed_powerup_sprite.png')
+bullets_powerup_sprite = pygame.image.load('sprites\_bullets_powerup_sprite.png')
+single_bullet_sprite = pygame.image.load('sprites\single_bullet_sprite.png')
+invisibility_powerup_sprite = pygame.image.load('sprites\invisibility_powerup_sprite.png')
+redbrick_wall_sprite = pygame.image.load('sprites\_redbrick_wall_sprite.png')
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([4,4])
+        self.image = single_bullet_sprite
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -47,13 +51,14 @@ class Bullet(pygame.sprite.Sprite):
 class Pacman(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pacman_image
+        self.image = pac_tank_sprite
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.speed_x = 0
         self.speed_y = 0
         self.score = 0
+        self.lives = 3
         self.gun_power_up_consumed = False
         self.start_time_gun_powerup = None
         self.start_time_speed_powerup = None
@@ -125,13 +130,15 @@ class Pacman(pygame.sprite.Sprite):
 
     def shoot_if_gun_powerup_consumed(self):
         if self.gun_power_up_consumed == True:
-            bullet = Bullet(x, y+15)
+            bullet = Bullet(x, y+20)
             bullet_group.add(bullet)
 
     def display_score(self):
         font = pygame.font.SysFont("serif", 25)
         score = font.render("score: " + str(self.score), True, BLACK)
         screen.blit(score, [10, 650])
+        lives = font.render("lives: " + str(self.lives), True, BLACK)
+        screen.blit(lives, [10, 600])
         if self.gun_power_up_consumed:
             seconds = (self.end_time - self.start_time_gun_powerup)/1000
             score = font.render("time-remaining: " + str(5-seconds), True, BLACK)
@@ -148,7 +155,7 @@ pacman_group.add(player)
 class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([40,40])
+        self.image = redbrick_wall_sprite
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -157,12 +164,11 @@ class Wall(pygame.sprite.Sprite):
 class GhostCageWall(Wall):
     def __init__(self, x, y):
         Wall.__init__(self, x, y)
-        self.image.fill(BLUE)
 
 class CageDoor(Wall):
     def __init__(self, x, y):
         Wall.__init__(self, x ,y)
-        self.image = cells
+        self.image.fill(RED)
 
 
 class PowerUp(pygame.sprite.Sprite):
@@ -178,7 +184,7 @@ class PowerUp(pygame.sprite.Sprite):
 class SpeedPowerUp(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
-        self.image = speed_power_up_image
+        self.image = speed_powerup_sprite
 
 # class InvisibilityPowerUp(PowerUp):
 #     def __init__(self, x, y):
@@ -188,7 +194,7 @@ class SpeedPowerUp(PowerUp):
 class Bullets(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y) 
-        self.image = gun_power_up_image
+        self.image = bullets_powerup_sprite
 
 gun_power_up_sprite = Bullets(450,45)
 gun_power_up_group.add(gun_power_up_sprite)
@@ -202,7 +208,7 @@ class PacDot(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.score_increment_value = 1  
+        self.score_increment_value = 1 
 
 class Fruit(PacDot):
     def __init__(self, x, y):
