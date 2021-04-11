@@ -37,17 +37,36 @@ invisibility_powerup_sprite = pygame.image.load('sprites\invisibility_powerup_sp
 redbrick_wall_sprite = pygame.image.load('sprites\_redbrick_wall_sprite.png')
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, direction):
         pygame.sprite.Sprite.__init__(self)
         self.image = single_bullet_sprite
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 4
-    
-    def update(self):
-        self.rect.x += self.speed
+        
+        self.direction = direction
+        self.speed_variable_constructor()
+
+    def speed_variable_constructor(self):
+        if self.direction == 'right':
+            self.speed_x = 15
+            self.speed_y = 0
+        elif self.direction == 'left':
+            self.speed_x = -15
+            self.speed_y = 0
+        elif self.direction == 'down':
+            self.speed_x = 0
+            self.speed_y = 15
+        elif self.direction == 'up':
+            self.speed_x = 0
+            self.speed_y = -15
  
+
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+
+
 
 
 class PacTank(pygame.sprite.Sprite):
@@ -68,7 +87,7 @@ class PacTank(pygame.sprite.Sprite):
         self.start_time_speed_powerup = None
         self.end_time = None
         self.speed_powerup_incrementer = 0
-    
+
     def set_image(self, index):
         self.image_index = index
 
@@ -91,17 +110,21 @@ class PacTank(pygame.sprite.Sprite):
 
         if self.speed_x == 5:
             self.set_image(0)
+            self.direction = 'right'
             if self.speed_powerup_incrementer != 0:
                 self.speed_x += self.speed_powerup_incrementer
         elif self.speed_y == 5:
+            self.direction = 'down'
             self.set_image(1)
             if self.speed_powerup_incrementer != 0:
                 self.speed_y += self.speed_powerup_incrementer
         elif self.speed_x == -5:
+            self.direction = 'left'
             self.set_image(2)
             if self.speed_powerup_incrementer != 0:
                 self.speed_x -= self.speed_powerup_incrementer
         elif self.speed_y == -5:
+            self.direction = 'up'
             self.set_image(3)
             if self.speed_powerup_incrementer != 0:
                 self.speed_y -= self.speed_powerup_incrementer
@@ -150,7 +173,8 @@ class PacTank(pygame.sprite.Sprite):
 
     def shoot_if_gun_powerup_consumed(self):
         if self.gun_power_up_consumed == True:
-            bullet = Bullet(self.rect.x + 20, self.rect.y + 18)
+            
+            bullet = Bullet(self.rect.x + 20, self.rect.y + 18, self.direction)
             bullet_group.add(bullet)
 
     def display_score(self):
