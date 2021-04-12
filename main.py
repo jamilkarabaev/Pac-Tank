@@ -20,9 +20,10 @@ ghosts_group = pygame.sprite.Group()
 walls_group = pygame.sprite.Group()
 powerups_group = pygame.sprite.Group()
 pacdots_group = pygame.sprite.Group()
-gun_power_up_group = pygame.sprite.Group()
+bullets_powerup_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 speed_powerups_group = pygame.sprite.Group()
+invisibility_powerups_group = pygame.sprite.Group()
 
 
 green_tank_right_sprite = pygame.image.load('sprites\green_tank_right_sprite.png')
@@ -47,8 +48,13 @@ class Bullet(pygame.sprite.Sprite):
         self.direction = direction
         self.speed_variable_constructor()
 
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+        self.collision_check(walls_group)
+
     def speed_variable_constructor(self):
-        if self.direction == 'right':
+        if self.direction == 'right': 
             self.speed_x = 15
             self.speed_y = 0
         elif self.direction == 'left':
@@ -60,11 +66,12 @@ class Bullet(pygame.sprite.Sprite):
         elif self.direction == 'up':
             self.speed_x = 0
             self.speed_y = -15
- 
 
-    def update(self):
-        self.rect.x += self.speed_x
-        self.rect.y += self.speed_y
+    def collision_check(self, group_type):
+        block_hit_list = pygame.sprite.spritecollide(self, group_type, False)
+        if block_hit_list:
+            if group_type == walls_group:
+                self.kill()
 
 
 
@@ -82,11 +89,15 @@ class PacTank(pygame.sprite.Sprite):
         self.speed_y = 0
         self.score = 0
         self.lives = 3
-        self.gun_power_up_consumed = False
-        self.start_time_gun_powerup = None
-        self.start_time_speed_powerup = None
         self.end_time = None
+        self.bullets_powerup_consumed = False
+        self.start_time_bullets_powerup = None
         self.speed_powerup_incrementer = 0
+        self.start_time_speed_powerup = None
+        self.invisibility_powerup_consumed = False
+        self.start_time_invisibility_powerup = None
+
+
 
     def set_image(self, index):
         self.image_index = index
@@ -95,17 +106,23 @@ class PacTank(pygame.sprite.Sprite):
         return self.images[self.image_index]
 
 
+
     def update(self):
         self.image = self.get_image()
         self.end_time= pygame.time.get_ticks()
-        if self.start_time_gun_powerup is not None:
-            seconds = (self.end_time - self.start_time_gun_powerup)/1000
+        if self.start_time_bullets_powerup is not None:
+            seconds = (self.end_time - self.start_time_bullets_powerup)/1000
             if seconds >= 5:
-                self.gun_power_up_consumed = False
+                self.bullets_powerup_consumed = False
         if self.start_time_speed_powerup is not None:
             seconds = (self.end_time - self.start_time_speed_powerup)/1000
             if seconds >= 5:
                 self.speed_powerup_incrementer = 0
+        if self.start_time_invisibility_powerup is not None:
+            seconds = (self.end_time - self.start_time_invisibility_powerup)/1000
+            if seconds >= 5:
+                self.invisibility_powerup_consumed = False
+        
 
 
         if self.speed_x == 5:
@@ -135,7 +152,7 @@ class PacTank(pygame.sprite.Sprite):
         self.rect.y += self.speed_y
         self.collide_y(walls_group)
         self.collision_check(pacdots_group)
-        self.collision_check(gun_power_up_group)
+        self.collision_check(bullets_powerup_group)
         self.collision_check(speed_powerups_group)
         self.display_score()
         
@@ -159,38 +176,46 @@ class PacTank(pygame.sprite.Sprite):
     def collision_check(self, group_type):
         block_hit_list = pygame.sprite.spritecollide(self, group_type, False)
         if block_hit_list:
-            if group_type == gun_power_up_group:
-                self.gun_power_up_consumed = True
-                self.start_time_gun_powerup = pygame.time.get_ticks()
+            if group_type == bullets_powerup_group:
+                self.bullets_powerup_consumed = True
+                self.start_time_bullets_powerup = pygame.time.get_ticks()
             if group_type == pacdots_group:
                 self.score += 1
             if group_type == speed_powerups_group:
                 self.speed_powerup_incrementer = 10
                 self.start_time_speed_powerup = pygame.time.get_ticks()
+            if group_type == invisibility_powerups_group:
+                self.invsibility_powerup_consumed = True
+                self.start_time_invisibility_powerup = pygame.time.get_ticks()
         for block in block_hit_list:
             block.kill()
 
 
-    def shoot_if_gun_powerup_consumed(self):
-        if self.gun_power_up_consumed == True:
-            
-            bullet = Bullet(self.rect.x + 20, self.rect.y + 18, self.direction)
+    def shoot_if_bullets_powerup_consumed(self):
+        if self.bullets_powerup_consumed == True:  
+            bullet = Bullet(self.rect.x + 18, self.rect.y + 18, self.direction)
             bullet_group.add(bullet)
 
     def display_score(self):
-        font = pygame.font.SysFont("serif", 25)
-        score = font.render("score: " + str(self.score), True, BLACK)
-        screen.blit(score, [10, 650])
-        lives = font.render("lives: " + str(self.lives), True, BLACK)
+        font_path = r"joystix_monospace.ttf"
+        font = pygame.font.Font(font_path, 20)
+        lives = font.render("lives:" + str(self.lives), True, BLACK)
         screen.blit(lives, [10, 600])
-        if self.gun_power_up_consumed:
-            seconds = (self.end_time - self.start_time_gun_powerup)/1000
-            score = font.render("time-remaining: " + str(5-seconds), True, BLACK)
-            screen.blit(score, [10, 750])
-        if self.speed_powerup_incrementer != 0:
+        score = font.render("score:" + str(self.score), True, BLACK)
+        screen.blit(score, [200, 600])
+        if self.speed_powerup_incrementer:
             seconds = (self.end_time - self.start_time_speed_powerup)/1000
-            score = font.render("time-remaining: " + str(5-seconds), True, BLACK)
-            screen.blit(score, [10, 600])   
+            score = font.render("speed powerup timer: " + str(5-seconds), True, BLACK)
+            screen.blit(score, [10, 670])   
+        if self.bullets_powerup_consumed:
+            seconds = (self.end_time - self.start_time_bullets_powerup)/1000
+            score = font.render("bullets powerup timer: " + str(5-seconds), True, BLACK)
+            screen.blit(score, [10, 700])
+        if self.invisibility_powerup_consumed:
+            seconds = (self.end_time - self.invisibility_powerup_consumed)/1000
+            score = font.render("invisibility powerup timer: " + str(5-seconds), True, BLACK)
+            screen.blit(score, [10, 730])
+
 
 
 player = PacTank(40,80)
@@ -240,8 +265,22 @@ class Bullets(PowerUp):
         PowerUp.__init__(self, x, y) 
         self.image = bullets_powerup_sprite
 
-gun_power_up_sprite = Bullets(450,45)
-gun_power_up_group.add(gun_power_up_sprite)
+class InvisibilityPowerUp(PowerUp):
+    def __init__(self, x, y):
+        PowerUp.__init__(self, x, y)
+        self.image = invisibility_powerup_sprite
+
+class PowerPellet(PowerUp):
+    def __init__(self, x, y):
+        PowerUp.__init__(self, x, y)
+
+
+bullets_powerup_sprite = Bullets(450,40)
+bullets_powerup_group.add(bullets_powerup_sprite)
+
+
+
+
 
 
 class PacDot(pygame.sprite.Sprite):
@@ -336,7 +375,7 @@ while not done:
                 player.speed_x = 0
                 player.speed_y = 5
             elif event.key == pygame.K_SPACE:
-                player.shoot_if_gun_powerup_consumed()
+                player.shoot_if_bullets_powerup_consumed()
             elif event.key == pygame.K_ESCAPE:
                 pygame.quit()
     
@@ -347,12 +386,13 @@ while not done:
     walls_group.draw(screen)
     ghosts_group.draw(screen)
     powerups_group.draw(screen)
+    bullet_group.draw(screen)
+    bullet_group.update()
     pactank_group.draw(screen)  
     pacdots_group.draw(screen)
     speed_powerups_group.draw(screen)
-    gun_power_up_group.draw(screen)
-    bullet_group.draw(screen)
-    bullet_group.update()
+    bullets_powerup_group.draw(screen)
+    
 
 
 
