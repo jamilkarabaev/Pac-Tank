@@ -154,6 +154,7 @@ class PacTank(pygame.sprite.Sprite):
         self.collision_check(pacdots_group)
         self.collision_check(bullets_powerup_group)
         self.collision_check(speed_powerups_group)
+        self.collision_check(invisibility_powerups_group)
         self.display_score()
         
     def collide_x(self, sprite_group):
@@ -185,7 +186,7 @@ class PacTank(pygame.sprite.Sprite):
                 self.speed_powerup_incrementer = 10
                 self.start_time_speed_powerup = pygame.time.get_ticks()
             if group_type == invisibility_powerups_group:
-                self.invsibility_powerup_consumed = True
+                self.invisibility_powerup_consumed = True
                 self.start_time_invisibility_powerup = pygame.time.get_ticks()
         for block in block_hit_list:
             block.kill()
@@ -205,16 +206,16 @@ class PacTank(pygame.sprite.Sprite):
         screen.blit(score, [200, 600])
         if self.speed_powerup_incrementer:
             seconds = (self.end_time - self.start_time_speed_powerup)/1000
-            score = font.render("speed powerup timer: " + str(5-seconds), True, BLACK)
-            screen.blit(score, [10, 670])   
+            speed_powerup_timer = font.render("speed powerup timer: " + str(int(5-seconds)), True, BLACK)
+            screen.blit(speed_powerup_timer, [10, 670])   
         if self.bullets_powerup_consumed:
             seconds = (self.end_time - self.start_time_bullets_powerup)/1000
-            score = font.render("bullets powerup timer: " + str(5-seconds), True, BLACK)
-            screen.blit(score, [10, 700])
+            bullets_powerup_timer = font.render("bullets powerup timer: " + str(int(5-seconds)), True, BLACK)
+            screen.blit(bullets_powerup_timer, [10, 700])
         if self.invisibility_powerup_consumed:
-            seconds = (self.end_time - self.invisibility_powerup_consumed)/1000
-            score = font.render("invisibility powerup timer: " + str(5-seconds), True, BLACK)
-            screen.blit(score, [10, 730])
+            seconds = (self.end_time - self.start_time_invisibility_powerup)/1000
+            invisibility_powerup_timer = font.render("invisibility powerup timer: " + str(int(5-seconds)), True, BLACK)
+            screen.blit(invisibility_powerup_timer, [10, 730])
 
 
 
@@ -270,13 +271,17 @@ class InvisibilityPowerUp(PowerUp):
         PowerUp.__init__(self, x, y)
         self.image = invisibility_powerup_sprite
 
+invisibility_powerups_obj = InvisibilityPowerUp(490,40)
+invisibility_powerups_group.add(invisibility_powerups_obj)
+
+
 class PowerPellet(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
 
 
-bullets_powerup_sprite = Bullets(450,40)
-bullets_powerup_group.add(bullets_powerup_sprite)
+bullets_powerups_obj = Bullets(450,40)
+bullets_powerup_group.add(bullets_powerups_obj)
 
 
 
@@ -392,6 +397,7 @@ while not done:
     pacdots_group.draw(screen)
     speed_powerups_group.draw(screen)
     bullets_powerup_group.draw(screen)
+    invisibility_powerups_group.draw(screen)
     
 
 
