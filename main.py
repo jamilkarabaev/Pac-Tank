@@ -293,6 +293,8 @@ class InvisibilityPowerUp(PowerUp):
 class PowerPellet(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
+        self.image = pygame.Surface([30,30])
+        self.image.fill(YELLOW)
 
 
 
@@ -318,6 +320,10 @@ class Fruit(PacDot):
 
 
 
+player = PacTank(40,40)
+pactank_group.add(player)
+
+
 Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
@@ -334,12 +340,31 @@ Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
+Map2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
 def generate_free_coords(map):
+    print(map)
     List_of_free_spots = []
     for y in range(len(map)):
         for x in range(len(map)+1):
             if map[y][x] == 0:
                 List_of_free_spots.append([y,x])
+    print(len(List_of_free_spots))
+    print("-------------stappy")
     current_range = len(List_of_free_spots) - 1
     picked_index = random.randrange(0, current_range, 1)
     picked_coordinates = List_of_free_spots[picked_index]
@@ -361,12 +386,13 @@ def take_spots(map, y, x):
 backgrounds = []
 
 def start_level(level):
+    print("this is level:" + str(level))
 
     #deciding, and drawing the map
     if level == 1:
         current_map = Map1
     elif level == 2:
-        current_map = Map1
+        current_map = Map2
     elif level == 3:
         current_map = Map1
     elif level == 4:
@@ -389,15 +415,13 @@ def start_level(level):
 
     #placing the objects in the map
     starting_player_position = [1,1]
-    player = PacTank(starting_player_position[1]*40,starting_player_position[0]*40)
-    pactank_group.add(player)
     take_spots(current_map, starting_player_position[0], starting_player_position[1])
 
-    for i in range(level + 5):
+    for i in range(level+5):
         frequency_decider = random.randrange(0, 10, 1)
         if frequency_decider < 8:
             position_for_item = generate_free_coords(current_map)
-            type_decider = random.randrange(0, 3, 1)
+            type_decider = random.randrange(0, 4, 1)
             if type_decider == 0:
                 bullets_powerup_obj = Bullets(position_for_item[1]*40,position_for_item[0]*40)
                 bullets_powerup_group.add(bullets_powerup_obj)
@@ -408,37 +432,25 @@ def start_level(level):
                 invisibility_powerup_obj = InvisibilityPowerUp(position_for_item[1]*40,position_for_item[0]*40)
                 invisibility_powerup_group.add(invisibility_powerup_obj)
             elif type_decider == 3:
+                powerpellet_powerup_obj = PowerPellet(position_for_item[1]*40+5,position_for_item[0]*40+5)
+                powerpellet_powerup_group.add(powerpellet_powerup_obj)
+            elif type_decider == 4:
                 fruit_obj = Fruit(position_for_item[1]*40,position_for_item[0]*40)
                 fruits_group.add(fruit_obj)
             take_spots(current_map, position_for_item[0], position_for_item[1])
 
     remaining_free_positions = list_of_all_remaining_free_coords(current_map)
     for position in remaining_free_positions:
-        pacdot = PacDot(position[1]*40, position[0]*40)
+        pacdot = PacDot(position[1]*40+16, position[0]*40+16)
         pacdots_group.add(pacdot)
         take_spots(current_map, position[0], position[1])
-
-
-    #drawing the objects in the map
-    screen.fill(WHITE)
-    sprites_group.draw(screen)
-    walls_group.draw(screen)
-    ghosts_group.draw(screen)
-    powerup_group.draw(screen)
-    bullet_group.draw(screen)
-    pactank_group.draw(screen)  
-    pacdots_group.draw(screen)
-    fruits_group.draw(screen)
-    speed_powerup_group.draw(screen)
-    bullets_powerup_group.draw(screen)
-    invisibility_powerup_group.draw(screen)
-    
     
 
 
 done = False
 clock = pygame.time.Clock()
 level = 0
+counter = 0
 
 while not done:
 
@@ -463,11 +475,34 @@ while not done:
             elif event.key == pygame.K_ESCAPE:
                 pygame.quit()
     
-    start_level(1)
+    if len(pacdots_group) == 0:
+        start_level(1)
+
+    if len(pacdots_group) == 50:
+        counter+=1
+    
+    if counter == 1:
+        start_level(2)
+        
    
-    pactank_group.update()
+    player.update()
     powerup_group.update()
     bullet_group.update()
+
+
+    screen.fill(WHITE)
+    sprites_group.draw(screen)
+    walls_group.draw(screen)
+    ghosts_group.draw(screen)
+    powerup_group.draw(screen)
+    bullet_group.draw(screen)
+    pactank_group.draw(screen)
+    pacdots_group.draw(screen)
+    fruits_group.draw(screen)
+    speed_powerup_group.draw(screen)
+    bullets_powerup_group.draw(screen)
+    invisibility_powerup_group.draw(screen)
+    
 
     pygame.display.flip()
     clock.tick(60)
