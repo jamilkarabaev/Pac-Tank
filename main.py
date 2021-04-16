@@ -18,12 +18,14 @@ sprites_group = pygame.sprite.Group()
 pactank_group = pygame.sprite.Group()
 ghosts_group = pygame.sprite.Group()
 walls_group = pygame.sprite.Group()
-powerups_group = pygame.sprite.Group()
+powerup_group = pygame.sprite.Group()
 pacdots_group = pygame.sprite.Group()
+fruits_group = pygame.sprite.Group()
 bullets_powerup_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
-speed_powerups_group = pygame.sprite.Group()
-invisibility_powerups_group = pygame.sprite.Group()
+speed_powerup_group = pygame.sprite.Group()
+invisibility_powerup_group = pygame.sprite.Group()
+powerpellet_powerup_group = pygame.sprite.Group()
 
 
 green_tank_right_sprite = pygame.image.load('sprites\green_tank_right_sprite.png')
@@ -55,17 +57,17 @@ class Bullet(pygame.sprite.Sprite):
 
     def speed_variable_constructor(self):
         if self.direction == 'right': 
-            self.speed_x = 15
+            self.speed_x = 20
             self.speed_y = 0
         elif self.direction == 'left':
-            self.speed_x = -15
+            self.speed_x = -20
             self.speed_y = 0
         elif self.direction == 'down':
             self.speed_x = 0
-            self.speed_y = 15
+            self.speed_y = 20
         elif self.direction == 'up':
             self.speed_x = 0
-            self.speed_y = -15
+            self.speed_y = -20
 
     def collision_check(self, group_type):
         block_hit_list = pygame.sprite.spritecollide(self, group_type, False)
@@ -96,6 +98,8 @@ class PacTank(pygame.sprite.Sprite):
         self.start_time_speed_powerup = None
         self.invisibility_powerup_consumed = False
         self.start_time_invisibility_powerup = None
+        self.powerpellet_powerup_consumed = False
+        self.start_time_powerpellet_powerup = None
 
 
 
@@ -122,6 +126,10 @@ class PacTank(pygame.sprite.Sprite):
             seconds = (self.end_time - self.start_time_invisibility_powerup)/1000
             if seconds >= 5:
                 self.invisibility_powerup_consumed = False
+        if self.start_time_powerpellet_powerup is not None:
+            seconds = (self.end_time - self.start_time_powerpellet_powerup)/1000
+            if seconds >= 5:
+                self.powerpellet_powerup_consumed = False
         
 
 
@@ -153,8 +161,8 @@ class PacTank(pygame.sprite.Sprite):
         self.collide_y(walls_group)
         self.collision_check(pacdots_group)
         self.collision_check(bullets_powerup_group)
-        self.collision_check(speed_powerups_group)
-        self.collision_check(invisibility_powerups_group)
+        self.collision_check(speed_powerup_group)
+        self.collision_check(invisibility_powerup_group)
         self.display_score()
         
     def collide_x(self, sprite_group):
@@ -180,14 +188,19 @@ class PacTank(pygame.sprite.Sprite):
             if group_type == bullets_powerup_group:
                 self.bullets_powerup_consumed = True
                 self.start_time_bullets_powerup = pygame.time.get_ticks()
-            if group_type == pacdots_group:
+            elif group_type == pacdots_group:
                 self.score += 1
-            if group_type == speed_powerups_group:
-                self.speed_powerup_incrementer = 10
+            elif group_type == fruits_group:
+                self.score += 5
+            elif group_type == speed_powerup_group:
+                self.speed_powerup_incrementer = 7
                 self.start_time_speed_powerup = pygame.time.get_ticks()
-            if group_type == invisibility_powerups_group:
+            elif group_type == invisibility_powerup_group:
                 self.invisibility_powerup_consumed = True
                 self.start_time_invisibility_powerup = pygame.time.get_ticks()
+            elif group_type == powerpellet_powerup_group:
+                self.powerpellet_powerup_consumed = True
+                self.start_time_powerpellet_powerup = pygame.time.get_ticks()
         for block in block_hit_list:
             block.kill()
 
@@ -203,7 +216,7 @@ class PacTank(pygame.sprite.Sprite):
         lives = font.render("lives:" + str(self.lives), True, BLACK)
         screen.blit(lives, [10, 600])
         score = font.render("score:" + str(self.score), True, BLACK)
-        screen.blit(score, [200, 600])
+        screen.blit(score, [150, 600])
         if self.speed_powerup_incrementer:
             seconds = (self.end_time - self.start_time_speed_powerup)/1000
             speed_powerup_timer = font.render("speed powerup timer: " + str(int(5-seconds)), True, BLACK)
@@ -217,10 +230,13 @@ class PacTank(pygame.sprite.Sprite):
             invisibility_powerup_timer = font.render("invisibility powerup timer: " + str(int(5-seconds)), True, BLACK)
             screen.blit(invisibility_powerup_timer, [10, 730])
 
+    def check_for_invalid_move(self):
+        top_position = self.rect.top/40
+        bottom_position = self.rect.bottom/40
 
 
-player = PacTank(40,80)
-pactank_group.add(player)
+
+
         
 class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -251,6 +267,7 @@ class PowerUp(pygame.sprite.Sprite):
         self.rect.y = y
         self.consumed = False
 
+
 class SpeedPowerUp(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
@@ -271,17 +288,11 @@ class InvisibilityPowerUp(PowerUp):
         PowerUp.__init__(self, x, y)
         self.image = invisibility_powerup_sprite
 
-invisibility_powerups_obj = InvisibilityPowerUp(490,40)
-invisibility_powerups_group.add(invisibility_powerups_obj)
 
 
 class PowerPellet(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
-
-
-bullets_powerups_obj = Bullets(450,40)
-bullets_powerup_group.add(bullets_powerups_obj)
 
 
 
@@ -303,30 +314,11 @@ class Fruit(PacDot):
         PacDot.__init__(self, x, y)
         self.image = pygame.Surface([30,30])
         self.image.fill(RED)
-        self.score_increment_value = 10
-
-fruit_sprite = Fruit(400,45)
-pacdots_group.add(fruit_sprite)
+        self.score_increment_value = 5
 
 
 
-
-sample_pac_dot = PacDot(200,60)
-sample_pac_dot1 = PacDot(220,60)
-sample_pac_dot2 = PacDot(260,60)
-pacdots_group.add(sample_pac_dot)
-pacdots_group.add(sample_pac_dot1)
-pacdots_group.add(sample_pac_dot2)
-
-
-speed_obj = SpeedPowerUp(40,120)
-speed_powerups_group.add(speed_obj)
-
-        
-
-
-
-Maps = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
         [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
@@ -342,24 +334,111 @@ Maps = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-for y in range(len(Maps)):
-    for x in range(len(Maps)+1):
-        if Maps[y][x] == 1:
-            wall = Wall(x*40, y*40)
-            walls_group.add(wall)
-        elif Maps[y][x] == 2:
-            wall = GhostCageWall(x*40, y*40)
-            walls_group.add(wall)
-        elif Maps[y][x] == 3:
-            wall = CageDoor(x*40, y*40)
-            walls_group.add(wall)
+def generate_free_coords(map):
+    List_of_free_spots = []
+    for y in range(len(map)):
+        for x in range(len(map)+1):
+            if map[y][x] == 0:
+                List_of_free_spots.append([y,x])
+    current_range = len(List_of_free_spots) - 1
+    picked_index = random.randrange(0, current_range, 1)
+    picked_coordinates = List_of_free_spots[picked_index]
+    return picked_coordinates
+
+def list_of_all_remaining_free_coords(map):
+    List_of_free_spots = []
+    for y in range(len(map)):
+        for x in range(len(map)+1):
+            if map[y][x] == 0:
+                List_of_free_spots.append([y,x])
+    return List_of_free_spots
+
+def take_spots(map, y, x):
+    map[y][x] = 4
+    
+
+        
+backgrounds = []
+
+def start_level(level):
+
+    #deciding, and drawing the map
+    if level == 1:
+        current_map = Map1
+    elif level == 2:
+        current_map = Map1
+    elif level == 3:
+        current_map = Map1
+    elif level == 4:
+        current_map = Map1
+    elif level == 5:
+        current_map = Map1
+
+    for y in range(len(current_map)):
+        for x in range(len(current_map)+1):
+            if current_map[y][x] == 1:
+                wall = Wall(x*40, y*40)
+                walls_group.add(wall)
+            elif current_map[y][x] == 2:
+                wall = GhostCageWall(x*40, y*40)
+                walls_group.add(wall)
+            elif current_map[y][x] == 3:
+                wall = CageDoor(x*40, y*40)
+                walls_group.add(wall)
 
 
+    #placing the objects in the map
+    starting_player_position = [1,1]
+    player = PacTank(starting_player_position[1]*40,starting_player_position[0]*40)
+    pactank_group.add(player)
+    take_spots(current_map, starting_player_position[0], starting_player_position[1])
 
+    for i in range(level + 5):
+        frequency_decider = random.randrange(0, 10, 1)
+        if frequency_decider < 8:
+            position_for_item = generate_free_coords(current_map)
+            type_decider = random.randrange(0, 3, 1)
+            if type_decider == 0:
+                bullets_powerup_obj = Bullets(position_for_item[1]*40,position_for_item[0]*40)
+                bullets_powerup_group.add(bullets_powerup_obj)
+            elif type_decider == 1:
+                speed_powerup_obj = SpeedPowerUp(position_for_item[1]*40,position_for_item[0]*40)
+                speed_powerup_group.add(speed_powerup_obj)
+            elif type_decider == 2:
+                invisibility_powerup_obj = InvisibilityPowerUp(position_for_item[1]*40,position_for_item[0]*40)
+                invisibility_powerup_group.add(invisibility_powerup_obj)
+            elif type_decider == 3:
+                fruit_obj = Fruit(position_for_item[1]*40,position_for_item[0]*40)
+                fruits_group.add(fruit_obj)
+            take_spots(current_map, position_for_item[0], position_for_item[1])
+
+    remaining_free_positions = list_of_all_remaining_free_coords(current_map)
+    for position in remaining_free_positions:
+        pacdot = PacDot(position[1]*40, position[0]*40)
+        pacdots_group.add(pacdot)
+        take_spots(current_map, position[0], position[1])
+
+
+    #drawing the objects in the map
+    screen.fill(WHITE)
+    sprites_group.draw(screen)
+    walls_group.draw(screen)
+    ghosts_group.draw(screen)
+    powerup_group.draw(screen)
+    bullet_group.draw(screen)
+    pactank_group.draw(screen)  
+    pacdots_group.draw(screen)
+    fruits_group.draw(screen)
+    speed_powerup_group.draw(screen)
+    bullets_powerup_group.draw(screen)
+    invisibility_powerup_group.draw(screen)
+    
+    
 
 
 done = False
 clock = pygame.time.Clock()
+level = 0
 
 while not done:
 
@@ -384,25 +463,11 @@ while not done:
             elif event.key == pygame.K_ESCAPE:
                 pygame.quit()
     
-    screen.fill(WHITE)
-    player.update()
-    powerups_group.update()
-    sprites_group.draw(screen)
-    walls_group.draw(screen)
-    ghosts_group.draw(screen)
-    powerups_group.draw(screen)
-    bullet_group.draw(screen)
+    start_level(1)
+   
+    pactank_group.update()
+    powerup_group.update()
     bullet_group.update()
-    pactank_group.draw(screen)  
-    pacdots_group.draw(screen)
-    speed_powerups_group.draw(screen)
-    bullets_powerup_group.draw(screen)
-    invisibility_powerups_group.draw(screen)
-    
-
-
-
-
 
     pygame.display.flip()
     clock.tick(60)
