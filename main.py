@@ -39,6 +39,10 @@ single_bullet_sprite = pygame.image.load('sprites\single_bullet_sprite.png')
 invisibility_powerup_sprite = pygame.image.load('sprites\invisibility_powerup_sprite.png')
 redbrick_wall_sprite = pygame.image.load('sprites\_redbrick_wall_sprite.png')
 
+
+
+
+#classes
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, direction):
         pygame.sprite.Sprite.__init__(self)
@@ -75,9 +79,6 @@ class Bullet(pygame.sprite.Sprite):
             if group_type == walls_group:
                 self.kill()
 
-
-
-
 class PacTank(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -101,15 +102,11 @@ class PacTank(pygame.sprite.Sprite):
         self.powerpellet_powerup_consumed = False
         self.start_time_powerpellet_powerup = None
 
-
-
     def set_image(self, index):
         self.image_index = index
 
     def get_image(self):
         return self.images[self.image_index]
-
-
 
     def update(self):
         self.image = self.get_image()
@@ -131,8 +128,6 @@ class PacTank(pygame.sprite.Sprite):
             if seconds >= 5:
                 self.powerpellet_powerup_consumed = False
         
-
-
         if self.speed_x == 5:
             self.set_image(0)
             self.direction = 'right'
@@ -154,7 +149,6 @@ class PacTank(pygame.sprite.Sprite):
             if self.speed_powerup_incrementer != 0:
                 self.speed_y -= self.speed_powerup_incrementer
             
-        
         self.rect.x += self.speed_x
         self.collide_x(walls_group)
         self.rect.y += self.speed_y
@@ -163,6 +157,7 @@ class PacTank(pygame.sprite.Sprite):
         self.collision_check(bullets_powerup_group)
         self.collision_check(speed_powerup_group)
         self.collision_check(invisibility_powerup_group)
+        self.collision_check(fruits_group)
         self.display_score()
         
     def collide_x(self, sprite_group):
@@ -180,7 +175,6 @@ class PacTank(pygame.sprite.Sprite):
                 self.rect.bottom = block.rect.top
             elif self.speed_y < 0:
                 self.rect.top = block.rect.bottom
-
 
     def collision_check(self, group_type):
         block_hit_list = pygame.sprite.spritecollide(self, group_type, False)
@@ -203,7 +197,6 @@ class PacTank(pygame.sprite.Sprite):
                 self.start_time_powerpellet_powerup = pygame.time.get_ticks()
         for block in block_hit_list:
             block.kill()
-
 
     def shoot_if_bullets_powerup_consumed(self):
         if self.bullets_powerup_consumed == True:  
@@ -229,15 +222,7 @@ class PacTank(pygame.sprite.Sprite):
             seconds = (self.end_time - self.start_time_invisibility_powerup)/1000
             invisibility_powerup_timer = font.render("invisibility powerup timer: " + str(int(5-seconds)), True, BLACK)
             screen.blit(invisibility_powerup_timer, [10, 730])
-
-    def check_for_invalid_move(self):
-        top_position = self.rect.top/40
-        bottom_position = self.rect.bottom/40
-
-
-
-
-        
+     
 class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -256,7 +241,6 @@ class CageDoor(Wall):
         Wall.__init__(self, x ,y)
         self.image.fill(RED)
 
-
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -267,16 +251,10 @@ class PowerUp(pygame.sprite.Sprite):
         self.rect.y = y
         self.consumed = False
 
-
 class SpeedPowerUp(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
         self.image = speed_powerup_sprite
-
-# class InvisibilityPowerUp(PowerUp):
-#     def __init__(self, x, y):
-#         PowerUp.__init__(self, x, y)
-#         self.image = 
 
 class Bullets(PowerUp):
     def __init__(self, x, y):
@@ -288,18 +266,11 @@ class InvisibilityPowerUp(PowerUp):
         PowerUp.__init__(self, x, y)
         self.image = invisibility_powerup_sprite
 
-
-
 class PowerPellet(PowerUp):
     def __init__(self, x, y):
         PowerUp.__init__(self, x, y)
         self.image = pygame.Surface([30,30])
         self.image.fill(YELLOW)
-
-
-
-
-
 
 class PacDot(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -316,9 +287,16 @@ class Fruit(PacDot):
         PacDot.__init__(self, x, y)
         self.image = pygame.Surface([30,30])
         self.image.fill(RED)
-        self.score_increment_value = 5
 
-
+class Ghost():
+    def __init__(self, x, y):
+        self.image = ghost_sprite
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed_x = 5
+        self.speed_y = 5
+    
 
 player = PacTank(40,40)
 pactank_group.add(player)
@@ -356,15 +334,81 @@ Map2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
+Map3 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+Map4 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+def generate_list_of_non_wall_coords(map):
+    y_coords = []
+    x_coords = []
+    List_of_non_wall_coords = []
+    for y in range(len(map)):
+        for x in range(len(map)+1):
+            if map[y][x] != 1 and map[y][x] != 2 and map[y][x] != 3:
+                List_of_non_wall_coords.append([y,x])
+    return List_of_non_wall_coords
+
+def check_for_valid_move(move_direction, map):
+    List_of_non_wall_coords = generate_list_of_non_wall_coords(map)
+    
+
+    player_x = player.rect.x/40
+    player_x_right = player_x + 1
+    player_x_left = player_x - 1
+
+    player_y = player.rect.y/40
+    player_y_down = player_y + 1
+    player_y_up = player_y - 1
+
+    if move_direction == 'right':
+        if [player_y, player_x_right] in List_of_non_wall_coords:
+            return True
+    elif move_direction == 'left':
+        if [player_y, player_x_left] in List_of_non_wall_coords:
+            return True
+    elif move_direction == 'down':
+        if [player_y_down, player_x] in List_of_non_wall_coords:
+            return True
+    elif move_direction == 'up':
+        if [player_y_up, player_x] in List_of_non_wall_coords:
+            return True
+    else:
+        return False
+
 def generate_free_coords(map):
-    print(map)
     List_of_free_spots = []
     for y in range(len(map)):
         for x in range(len(map)+1):
             if map[y][x] == 0:
                 List_of_free_spots.append([y,x])
-    print(len(List_of_free_spots))
-    print("-------------stappy")
     current_range = len(List_of_free_spots) - 1
     picked_index = random.randrange(0, current_range, 1)
     picked_coordinates = List_of_free_spots[picked_index]
@@ -380,25 +424,23 @@ def list_of_all_remaining_free_coords(map):
 
 def take_spots(map, y, x):
     map[y][x] = 4
-    
-
-        
+           
 backgrounds = []
 
-def start_level(level):
-    print("this is level:" + str(level))
+def start_level(level, current_map):
 
-    #deciding, and drawing the map
-    if level == 1:
-        current_map = Map1
-    elif level == 2:
-        current_map = Map2
-    elif level == 3:
-        current_map = Map1
-    elif level == 4:
-        current_map = Map1
-    elif level == 5:
-        current_map = Map1
+
+    ghosts_group.empty()
+    walls_group.empty()
+    powerup_group.empty()
+    pacdots_group.empty()
+    fruits_group.empty()
+    bullets_powerup_group.empty()
+    bullet_group.empty()
+    speed_powerup_group.empty()
+    invisibility_powerup_group.empty()
+    powerpellet_powerup_group.empty()
+
 
     for y in range(len(current_map)):
         for x in range(len(current_map)+1):
@@ -418,10 +460,11 @@ def start_level(level):
     take_spots(current_map, starting_player_position[0], starting_player_position[1])
 
     for i in range(level+5):
-        frequency_decider = random.randrange(0, 10, 1)
+        frequency_decider = random.randrange(0, 11, 1)
         if frequency_decider < 8:
             position_for_item = generate_free_coords(current_map)
-            type_decider = random.randrange(0, 4, 1)
+            type_decider = random.randrange(0, 5, 1)
+            print(type_decider)
             if type_decider == 0:
                 bullets_powerup_obj = Bullets(position_for_item[1]*40,position_for_item[0]*40)
                 bullets_powerup_group.add(bullets_powerup_obj)
@@ -435,7 +478,7 @@ def start_level(level):
                 powerpellet_powerup_obj = PowerPellet(position_for_item[1]*40+5,position_for_item[0]*40+5)
                 powerpellet_powerup_group.add(powerpellet_powerup_obj)
             elif type_decider == 4:
-                fruit_obj = Fruit(position_for_item[1]*40,position_for_item[0]*40)
+                fruit_obj = Fruit(position_for_item[1]*40+5,position_for_item[0]*40+5)
                 fruits_group.add(fruit_obj)
             take_spots(current_map, position_for_item[0], position_for_item[1])
 
@@ -447,47 +490,101 @@ def start_level(level):
     
 
 
+def check_for_queues():
+    if queued_move == 'left':
+        if check_for_valid_move('left', current_map) == True:
+            player.speed_y = 0
+            player.speed_x = -5
+    elif queued_move == 'right':
+        if check_for_valid_move('right', current_map) == True:
+            player.speed_y = 0
+            player.speed_x = 5
+    elif queued_move == 'up':
+        if check_for_valid_move('up', current_map) == True:
+            player.speed_y = -5
+            player.speed_x = 0
+    elif queued_move == 'down':
+        if check_for_valid_move('down', current_map) == True:
+            player.speed_y = 5
+            player.speed_x = 0
+
+
+
+
+
+
+
+
+
+
+            
 done = False
 clock = pygame.time.Clock()
 level = 0
-counter = 0
+queued_move = None
 
 while not done:
+
+
+    if len(pacdots_group) == 0:
+        level +=1
+        if level == 1:
+            current_map = Map1
+        elif level == 2:
+            current_map = Map2
+        elif level == 3:
+            current_map = Map3
+        elif level == 4:
+            current_map = Map4
+        elif level == 5:
+            current_map = Map4
+        start_level(level, current_map)
+    
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player.speed_y = 0
-                player.speed_x = -5
+                queued_move = None
+                if check_for_valid_move('left', current_map) == True:
+                    player.speed_y = 0
+                    player.speed_x = -5
+                else:
+                    queued_move = 'left'
             elif event.key == pygame.K_RIGHT:
-                player.speed_y = 0
-                player.speed_x = 5
+                
+                queued_move = None
+                if check_for_valid_move('right', current_map) == True:
+                    player.speed_y = 0
+                    player.speed_x = 5
+                else:
+                    queued_move = 'right'
             elif event.key == pygame.K_UP:
-                player.speed_x = 0
-                player.speed_y = -5
+                queued_move = None
+                if check_for_valid_move('up', current_map) == True:
+                    player.speed_x = 0
+                    player.speed_y = -5
+                else:
+                    queued_move = 'up'
             elif event.key == pygame.K_DOWN:
-                player.speed_x = 0
-                player.speed_y = 5
+                queued_move = None
+                if check_for_valid_move('down', current_map) == True:
+                    player.speed_x = 0
+                    player.speed_y = 5
+                else:
+                    queued_move = 'down'
             elif event.key == pygame.K_SPACE:
                 player.shoot_if_bullets_powerup_consumed()
             elif event.key == pygame.K_ESCAPE:
                 pygame.quit()
-    
-    if len(pacdots_group) == 0:
-        start_level(1)
 
-    if len(pacdots_group) == 50:
-        counter+=1
-    
-    if counter == 1:
-        start_level(2)
-        
-   
-    player.update()
-    powerup_group.update()
-    bullet_group.update()
+    check_for_queues()
+
+
+
+
+
 
 
     screen.fill(WHITE)
@@ -496,12 +593,17 @@ while not done:
     ghosts_group.draw(screen)
     powerup_group.draw(screen)
     bullet_group.draw(screen)
+    fruits_group.draw(screen)
     pactank_group.draw(screen)
     pacdots_group.draw(screen)
-    fruits_group.draw(screen)
+    
     speed_powerup_group.draw(screen)
     bullets_powerup_group.draw(screen)
     invisibility_powerup_group.draw(screen)
+
+    player.update()
+    powerup_group.update()
+    bullet_group.update()
     
 
     pygame.display.flip()
