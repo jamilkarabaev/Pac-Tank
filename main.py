@@ -3,6 +3,71 @@ import random
 import time
 
 
+Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+Map2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+Map3 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+Map4 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -288,83 +353,117 @@ class Fruit(PacDot):
         self.image = pygame.Surface([30,30])
         self.image.fill(RED)
 
-class Ghost():
-    def __init__(self, x, y):
-        self.image = ghost_sprite
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.speed_x = 5
-        self.speed_y = 5
-    
+
 
 player = PacTank(40,40)
 pactank_group.add(player)
 
+class Ghost(pygame.sprite.Sprite):
+    def __init__(self, x, y, map):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = ghost_sprite
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.grid_x = int(self.rect.x/40)
+        self.grid_y = int(self.rect.y/40)
+        self.speed_x = 5
+        self.speed_y = 5
+        self.map = map
+        self.execute_bfs = True
+        self.incrementation_amounts = []
+        self.counter = 0
 
-Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+    def update(self):
+        self.move()
+    
+    def move(self):
+        if self.execute_bfs:
+            self.incrementation_amounts = self.attain_movement()
+            if self.incrementation_amounts == None:
+                return
+            else:
+                self.execute_bfs = False
+        else:
+            self.counter += 5
 
-Map2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+            x_increment, y_increment = self.incrementation_amounts
+            
 
-Map3 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+            if x_increment > 0:
+                self.rect.x +=5
+            elif x_increment < 0:
+                self.rect.x -=5
+            elif y_increment > 0:
+                self.rect.y +=5
+            elif y_increment < 0:
+                self.rect.y -=5
+            
+            if self.counter >= 40:
+                self.execute_bfs = True
+                self.counter = 0
+            
 
-Map4 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 3, 3, 2, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 1, 1, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+            
+        
+
+
+    
+    def attain_movement(self):
+        next_cell = self.find_next_cell_in_path()
+        if next_cell != None:
+            x_increment = next_cell[0] - self.rect.x/40
+            y_increment = next_cell[1] - self.rect.y/40
+            return x_increment, y_increment
+        else:
+            return None
+
+    def find_next_cell_in_path(self):
+        path = self.bfs([int(self.rect.x/40), int(self.rect.y/40)], [int(player.rect.x/40), int(player.rect.y/40)])
+        if len(path) > 1:
+            return path[1]
+        else:
+            return None
+    
+    def bfs(self, start, target):
+
+        grid  = self.map
+        queue = [start]
+        path = []
+        visited = []
+
+        while queue:
+            current = queue[0]
+            queue.remove(queue[0])
+            visited.append(current)
+
+            if current == target:
+                break
+            else:
+                neighbours = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+                for neighbour in neighbours:
+                    if neighbour[0]+current[0] >= 0 and neighbour[0] + current[0] < len(grid[0]):
+                        if neighbour[1]+current[1] >= 0 and neighbour[1] + current[1] < len(grid):
+                            next_cell = [neighbour[0] + current[0], neighbour[1] + current[1]]
+                            if next_cell not in visited:
+                                if grid[next_cell[1]][next_cell[0]] != 1 and grid[next_cell[1]][next_cell[0]]!= 2 and grid[next_cell[1]][next_cell[0]]!=3:
+                                    queue.append(next_cell)
+                                    path.append({"Current": current, "Next": next_cell})
+
+        shortest = [target]
+        while target != start:
+            for step in path:
+                if step["Next"] == target:
+                    target = step["Current"]
+                    shortest.insert(0, step["Current"])
+        return shortest
+
+
+
+
+
+
+
 
 def generate_list_of_non_wall_coords(map):
     y_coords = []
@@ -428,6 +527,8 @@ def take_spots(map, y, x):
 backgrounds = []
 
 def start_level(level, current_map):
+    for ghost in ghosts_group:
+        ghost.kill()
 
 
     ghosts_group.empty()
@@ -456,15 +557,26 @@ def start_level(level, current_map):
 
 
     #placing the objects in the map
+    player.rect.x = 40
+    player.rect.y = 40
     starting_player_position = [1,1]
     take_spots(current_map, starting_player_position[0], starting_player_position[1])
+    inky = Ghost(7*40, 7*40, current_map)
+    # blinky = Ghost(8*40, 7*40, current_map)
+    # pinky = Ghost(7*40, 8*40, current_map)
+    # clyde = Ghost(8*40, 8*40, current_map)
+    ghosts_group.add(inky)
+    take_spots(current_map, 7, 7)
+    # take_spots(current_map, 7, 8)
+    # take_spots(current_map, 8, 7)
+    # take_spots(current_map, 8, 8)
+
 
     for i in range(level+5):
         frequency_decider = random.randrange(0, 11, 1)
         if frequency_decider < 8:
             position_for_item = generate_free_coords(current_map)
             type_decider = random.randrange(0, 5, 1)
-            print(type_decider)
             if type_decider == 0:
                 bullets_powerup_obj = Bullets(position_for_item[1]*40,position_for_item[0]*40)
                 bullets_powerup_group.add(bullets_powerup_obj)
@@ -487,6 +599,7 @@ def start_level(level, current_map):
         pacdot = PacDot(position[1]*40+16, position[0]*40+16)
         pacdots_group.add(pacdot)
         take_spots(current_map, position[0], position[1])
+    
     
 
 
@@ -516,29 +629,47 @@ def check_for_queues():
 
 
 
+def generate_new_map(level):
+    if level == 1:
+        current_map = Map1
+    elif level == 2:
+        current_map = Map2
+    elif level == 3:
+        current_map = Map3
+    elif level == 4:
+        current_map = Map4
+    elif level == 5:
+        current_map = Map4
+    return current_map
 
-            
+
+
+
 done = False
 clock = pygame.time.Clock()
 level = 0
 queued_move = None
+start_time = pygame.time.get_ticks()
+game_start = False
 
 while not done:
 
+    # if game_start == False:
+    #     Screen.fill(BLACK)
+    #     if  ``
 
-    if len(pacdots_group) == 0:
+
+    if len(pacdots_group) == 0 or len(pacdots_group) == 100:
         level +=1
-        if level == 1:
-            current_map = Map1
-        elif level == 2:
-            current_map = Map2
-        elif level == 3:
-            current_map = Map3
-        elif level == 4:
-            current_map = Map4
-        elif level == 5:
-            current_map = Map4
+        current_map = generate_new_map(level)
         start_level(level, current_map)
+
+    # block_hit_list = pygame.sprite.spritecollide(player, ghosts_group, False)
+    # if block_hit_list:
+    #     player.lives -=1
+    #     current_map = generate_new_map(level)
+    #     start_level(level, current_map)
+
     
 
     for event in pygame.event.get():
@@ -600,6 +731,10 @@ while not done:
     speed_powerup_group.draw(screen)
     bullets_powerup_group.draw(screen)
     invisibility_powerup_group.draw(screen)
+
+
+    ghosts_group.update()
+
 
     player.update()
     powerup_group.update()
