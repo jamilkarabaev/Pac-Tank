@@ -187,7 +187,7 @@ class PacTank(pygame.sprite.Sprite):
         self.powerpellet_powerup_consumed = False
         self.start_time_powerpellet_powerup = None
         self.direction = 'right'
-
+        self.respawn_needed = False
 
     def reset_main_variable(self):
         self.end_time = None
@@ -257,6 +257,7 @@ class PacTank(pygame.sprite.Sprite):
         self.collision_check(invisibility_powerup_group)
         self.collision_check(fruits_group)
         self.display_score()
+        self.check_collide_with_ghost()
         
     def collide_x(self, sprite_group):
         block_hit_list = pygame.sprite.spritecollide(self, sprite_group, False)
@@ -295,6 +296,14 @@ class PacTank(pygame.sprite.Sprite):
                 self.start_time_powerpellet_powerup = pygame.time.get_ticks()
         for block in block_hit_list:
             block.kill()
+
+    def check_collide_with_ghost(self):
+        block_hit_list = pygame.sprite.spritecollide(self, ghosts_group, False)
+        if block_hit_list:
+            self.lives -= 1
+            self.respawn_needed = True
+
+
 
     def shoot_if_bullets_powerup_consumed(self):
         if self.bullets_powerup_consumed == True:  
@@ -522,8 +531,6 @@ class Ghost(pygame.sprite.Sprite):
     def find_next_cell_in_path(self):
         if self.type == 'inky':
             path = self.bfs([int(self.rect.x/40), int(self.rect.y/40)], self.target_four_steps_ahead(self.map))
-            if self.target_four_steps_ahead(self.map) == [int(player.rect.x/40), int(player.rect.y/40)]:
-                print("not targetting 4 steps")
         else:
             path = self.bfs([int(self.rect.x/40), int(self.rect.y/40)], [int(player.rect.x/40), int(player.rect.y/40)])
         if len(path) > 1:
@@ -775,7 +782,8 @@ while not done:
     if level == 5:
         done = True
 
-    if len(pacdots_group) == 0:
+    if len(pacdots_group) == 0 or player.respawn_needed:
+        player.respawn_needed = False
         level +=1
         current_map = generate_new_map(level)
         start_level(level, current_map)
