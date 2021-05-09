@@ -6,7 +6,7 @@ import time
 Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1],
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
         [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
         [1, 0, 1, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 1, 0, 1],
@@ -16,7 +16,7 @@ Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
         [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 Map2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -459,7 +459,7 @@ class Ghost(pygame.sprite.Sprite):
             self.counter += incrementation_rate
 
             x_increment, y_increment = self.incrementation_amounts
-            
+
 
             if x_increment > 0:
                 self.rect.x +=incrementation_rate
@@ -469,7 +469,7 @@ class Ghost(pygame.sprite.Sprite):
                 self.rect.y +=incrementation_rate
             elif y_increment < 0:
                 self.rect.y -=incrementation_rate
-            
+
             if self.counter >= 40:
                 self.execute_bfs = True
                 self.counter = 0
@@ -481,13 +481,32 @@ class Ghost(pygame.sprite.Sprite):
 
     
     def attain_movement(self):
-        next_cell = self.find_next_cell_in_path()
+        if self.type == 'clyde':
+            next_cell = self.find_random_cell()
+        else:
+            next_cell = self.find_next_cell_in_path()
         if next_cell != None:
             x_increment = next_cell[0] - self.rect.x/40
             y_increment = next_cell[1] - self.rect.y/40
             return x_increment, y_increment
         else:
             return None
+
+    def find_random_cell(self):
+        while True:
+            number = random.randint(-2, 1)
+            if number == -2:
+                x_addition, y_addition = 1, 0
+            elif number == -1:
+                x_addition, y_addition = 0, 1
+            elif number == 0:
+                x_addition, y_addition = -1, 0
+            elif number == 1:
+                x_addition, y_addition = 0, -1
+            if self.map[self.rect.y/40 + y_addition][self.rect.x/40 + x_addition] != 1 and self.map[self.rect.y/40 + y_addition][self.rect.x/40 + x_addition] != 2 and self.map[self.rect.y/40 + y_addition][self.rect.x/40 + x_addition] != 3:
+                return[self.rect.x/40 + x_addition, self.rect.y/40 + y_addition]
+
+
 
     def find_next_cell_in_path(self):
         if self.type == 'inky':
@@ -503,7 +522,7 @@ class Ghost(pygame.sprite.Sprite):
     
     def bfs(self, start, target):
 
-        grid  = self.map
+        grid = self.map
         queue = [start]
         path = []
         visited = []
@@ -640,11 +659,13 @@ def start_level(level, current_map):
     player.rect.y = 40
     starting_player_position = [1,1]
     take_spots(current_map, starting_player_position[0], starting_player_position[1])
-    inky = Ghost(7*40, 7*40, current_map, 'inky')
+    clyde = Ghost(7*40, 7*40, current_map, 'clyde')
+    # pinky = Ghost(7 * 40, 7 * 40, current_map, 'pinky')
     # blinky = Ghost(8*40, 7*40, current_map)
     # pinky = Ghost(7*40, 8*40, current_map)
     # clyde = Ghost(8*40, 8*40, current_map)
-    ghosts_group.add(inky)
+    ghosts_group.add(clyde)
+    # ghosts_group.add(pinky)
     take_spots(current_map, 7, 7)
     # take_spots(current_map, 7, 8)
     # take_spots(current_map, 8, 7)
