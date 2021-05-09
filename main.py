@@ -114,7 +114,10 @@ green_tank_right_sprite = pygame.image.load('sprites\green_tank_right_sprite.png
 green_tank_down_sprite = pygame.image.load('sprites\green_tank_down_sprite.png')
 green_tank_left_sprite = pygame.image.load('sprites\green_tank_left_sprite.png')
 green_tank_up_sprite = pygame.image.load('sprites\green_tank_up_sprite.png')
-ghost_sprite = pygame.image.load('sprites\pink_ghost_sprite.png')
+blinky_sprite = pygame.image.load('sprites\red_ghost_sprite.png')
+pinky_sprite = pygame.image.load('sprites\pink_ghost_sprite.png')
+inky_sprite = pygame.image.load('sprites\blue_ghost_sprite.png')
+clyde_sprite = pygame.image.load('sprites\orange_ghost_sprite.png')
 speed_powerup_sprite = pygame.image.load('sprites\speed_powerup_sprite.png')
 bullets_powerup_sprite = pygame.image.load('sprites\_bullets_powerup_sprite.png')
 single_bullet_sprite = pygame.image.load('sprites\single_bullet_sprite.png')
@@ -408,7 +411,15 @@ pactank_group.add(player)
 class Ghost(pygame.sprite.Sprite):
     def __init__(self, x, y, map, type):
         pygame.sprite.Sprite.__init__(self)
-        self.image = ghost_sprite
+        self.type = type
+        if self.type == 'blinky':
+            self.image = blinky_sprite
+        elif self.type == 'pinky':
+            self.image = pinky_sprite
+        elif self.type == 'inky':
+            self.image = inky_sprite
+        elif self.type == 'clyde':
+            self.image = clyde_sprite
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -420,7 +431,7 @@ class Ghost(pygame.sprite.Sprite):
         self.execute_bfs = True
         self.incrementation_amounts = []
         self.counter = 0
-        self.type = type
+
 
     def update(self):
         self.move()
