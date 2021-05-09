@@ -670,17 +670,19 @@ def start_level(level, current_map):
     player.rect.y = 40
     starting_player_position = [1,1]
     take_spots(current_map, starting_player_position[0], starting_player_position[1])
-    clyde = Ghost(7*40, 7*40, current_map, 'clyde')
-    # pinky = Ghost(7 * 40, 7 * 40, current_map, 'pinky')
-    # blinky = Ghost(8*40, 7*40, current_map)
-    # pinky = Ghost(7*40, 8*40, current_map)
-    # clyde = Ghost(8*40, 8*40, current_map)
+
+    pinky = Ghost(7 * 40, 7 * 40, current_map, 'pinky')
+    blinky = Ghost(8*40, 7*40, current_map, 'blinky')
+    inky = Ghost(7*40, 8*40, current_map, 'inky')
+    clyde = Ghost(8*40, 8*40, current_map, 'clyde')
+    ghosts_group.add(blinky)
+    ghosts_group.add(pinky)
+    ghosts_group.add(inky)
     ghosts_group.add(clyde)
-    # ghosts_group.add(pinky)
     take_spots(current_map, 7, 7)
-    # take_spots(current_map, 7, 8)
-    # take_spots(current_map, 8, 7)
-    # take_spots(current_map, 8, 8)
+    take_spots(current_map, 7, 8)
+    take_spots(current_map, 8, 7)
+    take_spots(current_map, 8, 8)
 
 
     for i in range(level+5):
