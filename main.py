@@ -183,6 +183,8 @@ class PacTank(pygame.sprite.Sprite):
         self.start_time_invisibility_powerup = None
         self.powerpellet_powerup_consumed = False
         self.start_time_powerpellet_powerup = None
+        self.direction = 'right'
+
 
     def reset_main_variable(self):
         self.end_time = None
@@ -315,6 +317,23 @@ class PacTank(pygame.sprite.Sprite):
             seconds = (self.end_time - self.start_time_invisibility_powerup)/1000
             invisibility_powerup_timer = font.render("invisibility powerup timer: " + str(int(5-seconds)), True, BLACK)
             screen.blit(invisibility_powerup_timer, [10, 730])
+
+    def four_steps_ahead(self):
+        if self.direction == 'right':
+            return int((self.rect.x + 4*40)/40), int((self.rect.y)/40)
+        elif self.direction == 'left':
+            return int((self.rect.x - 4*40)/40),int((self.rect.y)/40)
+        elif self.direction == 'up':
+            return int((self.rect.x)/40), int((self.rect.y - 4*40)/40)
+        elif self.direction == 'down':
+            return int((self.rect.x)/40), int((self.rect.y + 4*40)/40)
+
+
+
+
+
+
+
      
 class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -387,7 +406,7 @@ player = PacTank(40,40)
 pactank_group.add(player)
 
 class Ghost(pygame.sprite.Sprite):
-    def __init__(self, x, y, map):
+    def __init__(self, x, y, map, type):
         pygame.sprite.Sprite.__init__(self)
         self.image = ghost_sprite
         self.rect = self.image.get_rect()
@@ -401,11 +420,35 @@ class Ghost(pygame.sprite.Sprite):
         self.execute_bfs = True
         self.incrementation_amounts = []
         self.counter = 0
+        self.type = type
 
     def update(self):
         self.move()
-    
+
+
     def move(self):
+        if self.type == 'blinky':
+            self.move_shortest_path(4)
+        elif self.type == 'pinky':
+            self.move_shortest_path(5)
+        elif self.type == 'inky':
+            self.move_shortest_path(5)
+        elif self.type == 'clyde':
+            self.move_shortest_path(5)
+
+    def target_four_steps_ahead(self, map):
+        spot_x, spot_y = player.four_steps_ahead()
+        if spot_x >= 0 and spot_x <= 15 and spot_y >= 0 and spot_y <= len(map)-1:
+            if map[spot_y][spot_x] != 1 and map[spot_y][spot_x] != 2 and map[spot_y][spot_x] != 3:
+                return [spot_x, spot_y]
+            else:
+                return [int(player.rect.x/40), int(player.rect.y/40)]
+        else:
+            return [int(player.rect.x / 40), int(player.rect.y / 40)]
+
+
+
+    def move_shortest_path(self, incrementation_rate):
         if self.execute_bfs:
             self.incrementation_amounts = self.attain_movement()
             if self.incrementation_amounts == None:
@@ -413,19 +456,19 @@ class Ghost(pygame.sprite.Sprite):
             else:
                 self.execute_bfs = False
         else:
-            self.counter += 5
+            self.counter += incrementation_rate
 
             x_increment, y_increment = self.incrementation_amounts
             
 
             if x_increment > 0:
-                self.rect.x +=5
+                self.rect.x +=incrementation_rate
             elif x_increment < 0:
-                self.rect.x -=5
+                self.rect.x -=incrementation_rate
             elif y_increment > 0:
-                self.rect.y +=5
+                self.rect.y +=incrementation_rate
             elif y_increment < 0:
-                self.rect.y -=5
+                self.rect.y -=incrementation_rate
             
             if self.counter >= 40:
                 self.execute_bfs = True
@@ -447,7 +490,12 @@ class Ghost(pygame.sprite.Sprite):
             return None
 
     def find_next_cell_in_path(self):
-        path = self.bfs([int(self.rect.x/40), int(self.rect.y/40)], [int(player.rect.x/40), int(player.rect.y/40)])
+        if self.type == 'inky':
+            path = self.bfs([int(self.rect.x/40), int(self.rect.y/40)], self.target_four_steps_ahead(self.map))
+            if self.target_four_steps_ahead(self.map) == [int(player.rect.x/40), int(player.rect.y/40)]:
+                print("not targetting 4 steps")
+        else:
+            path = self.bfs([int(self.rect.x/40), int(self.rect.y/40)], [int(player.rect.x/40), int(player.rect.y/40)])
         if len(path) > 1:
             return path[1]
         else:
@@ -592,7 +640,7 @@ def start_level(level, current_map):
     player.rect.y = 40
     starting_player_position = [1,1]
     take_spots(current_map, starting_player_position[0], starting_player_position[1])
-    inky = Ghost(7*40, 7*40, current_map)
+    inky = Ghost(7*40, 7*40, current_map, 'inky')
     # blinky = Ghost(8*40, 7*40, current_map)
     # pinky = Ghost(7*40, 8*40, current_map)
     # clyde = Ghost(8*40, 8*40, current_map)
@@ -693,7 +741,7 @@ while not done:
     if level == 5:
         done = True
 
-    if len(pacdots_group) == 0 or len(pacdots_group) == 100:
+    if len(pacdots_group) == 0:
         level +=1
         current_map = generate_new_map(level)
         start_level(level, current_map)
