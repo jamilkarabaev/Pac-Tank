@@ -444,7 +444,9 @@ class Ghost(pygame.sprite.Sprite):
 
     def check_for_bullet_collision(self):
         block_hit_list = pygame.sprite.spritecollide(self, bullet_group, False)
-        for block in block_hit_list:
+        if block_hit_list:
+            for block in block_hit_list:
+                block.kill()
             self.kill()
 
 
