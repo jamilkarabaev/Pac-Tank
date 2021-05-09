@@ -505,10 +505,14 @@ class Ghost(pygame.sprite.Sprite):
 
     
     def attain_movement(self):
-        if self.type == 'clyde':
+        if player.invisibility_powerup_consumed == True:
             next_cell = self.find_random_cell()
         else:
-            next_cell = self.find_next_cell_in_path()
+            if self.type == 'clyde':
+                next_cell = self.find_random_cell()
+            else:
+                next_cell = self.find_next_cell_in_path()
+
         if next_cell != None:
             x_increment = next_cell[0] - self.rect.x/40
             y_increment = next_cell[1] - self.rect.y/40
