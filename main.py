@@ -503,8 +503,8 @@ class Ghost(pygame.sprite.Sprite):
                 x_addition, y_addition = -1, 0
             elif number == 1:
                 x_addition, y_addition = 0, -1
-            if self.map[self.rect.y/40 + y_addition][self.rect.x/40 + x_addition] != 1 and self.map[self.rect.y/40 + y_addition][self.rect.x/40 + x_addition] != 2 and self.map[self.rect.y/40 + y_addition][self.rect.x/40 + x_addition] != 3:
-                return[self.rect.x/40 + x_addition, self.rect.y/40 + y_addition]
+            if self.map[int(self.rect.y/40) + y_addition][int(self.rect.x/40) + x_addition] != 1 and self.map[int(self.rect.y/40) + y_addition][int(self.rect.x/40) + x_addition] != 2 and self.map[int(self.rect.y/40) + y_addition][int(self.rect.x/40) + x_addition] != 3:
+                return[int(self.rect.x/40) + x_addition, int(self.rect.y/40) + y_addition]
 
 
 
