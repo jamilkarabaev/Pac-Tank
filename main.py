@@ -2,9 +2,6 @@ import pygame
 import random
 import time
 
-font_path = r"joystix_monospace.ttf"
-font = pygame.font.Font(font_path, 20)
-
 Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1],
@@ -91,6 +88,9 @@ BLUE = (0, 0, 255)
 YELLOW = (255,255,0)
 pygame.init()
 
+font_path = r"joystix_monospace.ttf"
+font = pygame.font.Font(font_path, 20)
+
 size = (640, 800)
 screen = pygame.display.set_mode(size)
 
@@ -123,24 +123,23 @@ invisibility_powerup_sprite = pygame.image.load('sprites\invisibility_powerup_sp
 redbrick_wall_sprite = pygame.image.load('sprites\_redbrick_wall_sprite.png')
 
 
-class Button(pygame.sprite.Sprite):
+class Button():
     def __init__(self, x, y, color, width, height, text):
-        pygame.sprite.Sprite.__init__(self)
-        self.rect.x = x
-        self.rect.y = y
+        self.x = x
+        self.y = y
         self.color = color
         self.width = width
         self.height = height
         self.text = text
 
     def draw(self):
-        pygame.draw.rect(screen, self.color, (self.rect.x, self.rect.y, self.width, self.height), 0)
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
         text = font.render(self.text, True, BLACK)
-        screen.blit(text, (self.rect.x + (self.width/2 - text.get_width()/2), self.rect.y + (self.height/2 - text.get_height()/2)))
+        screen.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
 
     def mouse_is_over(self, pos):
         # where pos is a tuple of (x,y) coordinates
-        if pos[0] > self.rect.x and pos[0] < self.rect.x + self.width:
+        if pos[0] > self.x and pos[0] < self.x + self.width:
             if pos[1] > self.y and pos[1] < self.y + self.height:
                 return True
         return False
@@ -803,96 +802,85 @@ start_time = pygame.time.get_ticks()
 game_start = False
 
 while not done:
-
     if game_start == False:
         screen.fill(BLACK)
-        play_button = Button(30,30, GREEN, 30, 30, 't')
-
-
-    if level == 5:
-        done = True
-
-    if len(pacdots_group) == 0 or player.respawn_needed:
-        player.respawn_needed = False
-        level +=1
-        current_map = generate_new_map(level)
-        start_level(level, current_map)
-
-    # block_hit_list = pygame.sprite.spritecollide(player, ghosts_group, False)
-    # if block_hit_list:
-    #     player.lives -=1
-    #     current_map = generate_new_map(level)
-    #     start_level(level, current_map)
-
-    
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        play_button = Button(30, 30, RED, 30, 30,  't')
+    else:
+        if level == 5:
             done = True
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                queued_move = None
-                if check_for_valid_move('left', current_map) == True:
-                    player.speed_y = 0
-                    player.speed_x = -5
-                else:
-                    queued_move = 'left'
-            elif event.key == pygame.K_RIGHT:
-                
-                queued_move = None
-                if check_for_valid_move('right', current_map) == True:
-                    player.speed_y = 0
-                    player.speed_x = 5
-                else:
-                    queued_move = 'right'
-            elif event.key == pygame.K_UP:
-                queued_move = None
-                if check_for_valid_move('up', current_map) == True:
-                    player.speed_x = 0
-                    player.speed_y = -5
-                else:
-                    queued_move = 'up'
-            elif event.key == pygame.K_DOWN:
-                queued_move = None
-                if check_for_valid_move('down', current_map) == True:
-                    player.speed_x = 0
-                    player.speed_y = 5
-                else:
-                    queued_move = 'down'
-            elif event.key == pygame.K_SPACE:
-                player.shoot_if_bullets_powerup_consumed()
-            elif event.key == pygame.K_ESCAPE:
-                pygame.quit()
+        if len(pacdots_group) == 0 or player.respawn_needed:
+            player.respawn_needed = False
+            level +=1
+            current_map = generate_new_map(level)
+            start_level(level, current_map)
 
-    check_for_queues()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    queued_move = None
+                    if check_for_valid_move('left', current_map) == True:
+                        player.speed_y = 0
+                        player.speed_x = -5
+                    else:
+                        queued_move = 'left'
+                elif event.key == pygame.K_RIGHT:
 
+                    queued_move = None
+                    if check_for_valid_move('right', current_map) == True:
+                        player.speed_y = 0
+                        player.speed_x = 5
+                    else:
+                        queued_move = 'right'
+                elif event.key == pygame.K_UP:
+                    queued_move = None
+                    if check_for_valid_move('up', current_map) == True:
+                        player.speed_x = 0
+                        player.speed_y = -5
+                    else:
+                        queued_move = 'up'
+                elif event.key == pygame.K_DOWN:
+                    queued_move = None
+                    if check_for_valid_move('down', current_map) == True:
+                        player.speed_x = 0
+                        player.speed_y = 5
+                    else:
+                        queued_move = 'down'
+                elif event.key == pygame.K_SPACE:
+                    player.shoot_if_bullets_powerup_consumed()
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
 
-
-
-
-
-
-    screen.fill(WHITE)
-    sprites_group.draw(screen)
-    walls_group.draw(screen)
-    ghosts_group.draw(screen)
-    powerup_group.draw(screen)
-    bullet_group.draw(screen)
-    fruits_group.draw(screen)
-    pactank_group.draw(screen)
-    pacdots_group.draw(screen)
-    
-    speed_powerup_group.draw(screen)
-    bullets_powerup_group.draw(screen)
-    invisibility_powerup_group.draw(screen)
+        check_for_queues()
 
 
-    ghosts_group.update()
 
 
-    player.update()
-    powerup_group.update()
-    bullet_group.update()
+
+
+
+        screen.fill(WHITE)
+        sprites_group.draw(screen)
+        walls_group.draw(screen)
+        ghosts_group.draw(screen)
+        powerup_group.draw(screen)
+        bullet_group.draw(screen)
+        fruits_group.draw(screen)
+        pactank_group.draw(screen)
+        pacdots_group.draw(screen)
+
+        speed_powerup_group.draw(screen)
+        bullets_powerup_group.draw(screen)
+        invisibility_powerup_group.draw(screen)
+
+
+        ghosts_group.update()
+
+
+        player.update()
+        powerup_group.update()
+        bullet_group.update()
     
 
     pygame.display.flip()
