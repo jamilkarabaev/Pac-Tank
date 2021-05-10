@@ -754,25 +754,6 @@ def start_level(level, current_map):
     
 
 
-def check_for_queues():
-    if queued_move == 'left':
-        if check_for_valid_move('left', current_map) == True:
-            player.speed_y = 0
-            player.speed_x = -5
-    elif queued_move == 'right':
-        if check_for_valid_move('right', current_map) == True:
-            player.speed_y = 0
-            player.speed_x = 5
-    elif queued_move == 'up':
-        if check_for_valid_move('up', current_map) == True:
-            player.speed_y = -5
-            player.speed_x = 0
-    elif queued_move == 'down':
-        if check_for_valid_move('down', current_map) == True:
-            player.speed_y = 5
-            player.speed_x = 0
-
-
 
 
 
@@ -794,6 +775,25 @@ def generate_new_map(level):
     return current_map
 
 
+def check_for_queues():
+    if queued_move == 'left':
+        if check_for_valid_move('left', current_map) == True:
+            player.speed_y = 0
+            player.speed_x = -5
+    elif queued_move == 'right':
+        if check_for_valid_move('right', current_map) == True:
+            player.speed_y = 0
+            player.speed_x = 5
+    elif queued_move == 'up':
+        if check_for_valid_move('up', current_map) == True:
+            player.speed_y = -5
+            player.speed_x = 0
+    elif queued_move == 'down':
+        if check_for_valid_move('down', current_map) == True:
+            player.speed_y = 5
+            player.speed_x = 0
+
+
 
 
 done = False
@@ -804,75 +804,7 @@ start_time = pygame.time.get_ticks()
 game_start = False
 
 
-def start_game(level):
 
-    if level == 5:
-        done = True
-    if len(pacdots_group) == 0 or player.respawn_needed:
-        player.respawn_needed = False
-        level += 1
-        current_map = generate_new_map(level)
-        start_level(level, current_map)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                queued_move = None
-                if check_for_valid_move('left', current_map) == True:
-                    player.speed_y = 0
-                    player.speed_x = -5
-                else:
-                    queued_move = 'left'
-            elif event.key == pygame.K_RIGHT:
-
-                queued_move = None
-                if check_for_valid_move('right', current_map) == True:
-                    player.speed_y = 0
-                    player.speed_x = 5
-                else:
-                    queued_move = 'right'
-            elif event.key == pygame.K_UP:
-                queued_move = None
-                if check_for_valid_move('up', current_map) == True:
-                    player.speed_x = 0
-                    player.speed_y = -5
-                else:
-                    queued_move = 'up'
-            elif event.key == pygame.K_DOWN:
-                queued_move = None
-                if check_for_valid_move('down', current_map) == True:
-                    player.speed_x = 0
-                    player.speed_y = 5
-                else:
-                    queued_move = 'down'
-            elif event.key == pygame.K_SPACE:
-                player.shoot_if_bullets_powerup_consumed()
-            elif event.key == pygame.K_ESCAPE:
-                pygame.quit()
-
-    check_for_queues()
-
-    screen.fill(WHITE)
-    sprites_group.draw(screen)
-    walls_group.draw(screen)
-    ghosts_group.draw(screen)
-    powerup_group.draw(screen)
-    bullet_group.draw(screen)
-    fruits_group.draw(screen)
-    pactank_group.draw(screen)
-    pacdots_group.draw(screen)
-
-    speed_powerup_group.draw(screen)
-    bullets_powerup_group.draw(screen)
-    invisibility_powerup_group.draw(screen)
-
-    ghosts_group.update()
-
-    player.update()
-    powerup_group.update()
-    bullet_group.update()
 
 
 
@@ -880,8 +812,13 @@ def start_game(level):
 while not done:
     if game_start == False:
         screen.fill(BLACK)
-        play_button = Button(30, 30, RED, 30, 30,  't')
+
+        play_button = Button(150, 200, GREEN, 300, 100,  'PLAY')
         play_button.draw()
+
+        pactank_text = font.render("PAC TANK", True, BLACK)
+        screen.blit(pactank_text, (30,30))
+
         for event in pygame.event.get():
             mouse_pointer = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
@@ -895,9 +832,75 @@ while not done:
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
     else:
-        start_game(level)
+        if level == 5:
+            done = True
+        if len(pacdots_group) == 0 or player.respawn_needed:
+            player.respawn_needed = False
+            level += 1
+            current_map = generate_new_map(level)
+            start_level(level, current_map)
 
-    
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    queued_move = None
+                    if check_for_valid_move('left', current_map) == True:
+                        player.speed_y = 0
+                        player.speed_x = -5
+                    else:
+                        queued_move = 'left'
+                elif event.key == pygame.K_RIGHT:
+
+                    queued_move = None
+                    if check_for_valid_move('right', current_map) == True:
+                        player.speed_y = 0
+                        player.speed_x = 5
+                    else:
+                        queued_move = 'right'
+                elif event.key == pygame.K_UP:
+                    queued_move = None
+                    if check_for_valid_move('up', current_map) == True:
+                        player.speed_x = 0
+                        player.speed_y = -5
+                    else:
+                        queued_move = 'up'
+                elif event.key == pygame.K_DOWN:
+                    queued_move = None
+                    if check_for_valid_move('down', current_map) == True:
+                        player.speed_x = 0
+                        player.speed_y = 5
+                    else:
+                        queued_move = 'down'
+                elif event.key == pygame.K_SPACE:
+                    player.shoot_if_bullets_powerup_consumed()
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+
+        check_for_queues()
+
+        screen.fill(WHITE)
+        sprites_group.draw(screen)
+        walls_group.draw(screen)
+        ghosts_group.draw(screen)
+        powerup_group.draw(screen)
+        bullet_group.draw(screen)
+        fruits_group.draw(screen)
+        pactank_group.draw(screen)
+        pacdots_group.draw(screen)
+
+        speed_powerup_group.draw(screen)
+        bullets_powerup_group.draw(screen)
+        invisibility_powerup_group.draw(screen)
+
+        ghosts_group.update()
+
+        player.update()
+        powerup_group.update()
+        bullet_group.update()
+
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
