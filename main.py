@@ -2,6 +2,8 @@ import pygame
 import random
 import time
 
+font_path = r"joystix_monospace.ttf"
+font = pygame.font.Font(font_path, 20)
 
 Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
@@ -121,9 +123,30 @@ invisibility_powerup_sprite = pygame.image.load('sprites\invisibility_powerup_sp
 redbrick_wall_sprite = pygame.image.load('sprites\_redbrick_wall_sprite.png')
 
 
+class Button(pygame.sprite.Sprite):
+    def __init__(self, x, y, color, width, height, text):
+        pygame.sprite.Sprite.__init__(self)
+        self.rect.x = x
+        self.rect.y = y
+        self.color = color
+        self.width = width
+        self.height = height
+        self.text = text
+
+    def draw(self):
+        pygame.draw.rect(screen, self.color, (self.rect.x, self.rect.y, self.width, self.height), 0)
+        text = font.render(self.text, True, BLACK)
+        screen.blit(text, (self.rect.x + (self.width/2 - text.get_width()/2), self.rect.y + (self.height/2 - text.get_height()/2)))
+
+    def mouse_is_over(self, pos):
+        # where pos is a tuple of (x,y) coordinates
+        if pos[0] > self.rect.x and pos[0] < self.rect.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True
+        return False
 
 
-#classes
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, direction):
         pygame.sprite.Sprite.__init__(self)
@@ -307,8 +330,7 @@ class PacTank(pygame.sprite.Sprite):
             bullet_group.add(bullet)
 
     def display_score(self):
-        font_path = r"joystix_monospace.ttf"
-        font = pygame.font.Font(font_path, 20)
+
         lives = font.render("lives:" + str(self.lives), True, BLACK)
         screen.blit(lives, [10, 600])
         score = font.render("score:" + str(self.score), True, BLACK)
@@ -782,9 +804,9 @@ game_start = False
 
 while not done:
 
-    # if game_start == False:
-    #     Screen.fill(BLACK)
-    #     if  ``
+    if game_start == False:
+        screen.fill(BLACK)
+        play_button = Button(30,30, GREEN, 30, 30, 't')
 
 
     if level == 5:
