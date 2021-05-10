@@ -883,8 +883,12 @@ while not done:
         play_button = Button(30, 30, RED, 30, 30,  't')
         play_button.draw()
         for event in pygame.event.get():
+            mouse_pointer = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
                 done = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button.mouse_is_over(mouse_pointer):
+                    game_start = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     pass
