@@ -94,6 +94,8 @@ font = pygame.font.Font(font_path, 20)
 size = (640, 800)
 screen = pygame.display.set_mode(size)
 
+
+buttons_group = pygame.sprite.Group()
 sprites_group = pygame.sprite.Group()
 pactank_group = pygame.sprite.Group()
 ghosts_group = pygame.sprite.Group()
@@ -805,6 +807,7 @@ while not done:
     if game_start == False:
         screen.fill(BLACK)
         play_button = Button(30, 30, RED, 30, 30,  't')
+        buttons_group.add(play_button)
     else:
         if level == 5:
             done = True
@@ -882,7 +885,7 @@ while not done:
         powerup_group.update()
         bullet_group.update()
     
-
+    buttons_group.draw()
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
