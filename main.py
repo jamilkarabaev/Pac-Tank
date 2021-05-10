@@ -805,7 +805,7 @@ level = 0
 queued_move = None
 start_time = pygame.time.get_ticks()
 game_start = False
-
+map_copy = None
 
 
 
@@ -847,11 +847,18 @@ while not done:
             player.level+=1
             player.respawn_needed = False
             current_map = generate_new_map(player.level)
+            map_copy = list(current_map)
+            print(map_copy)
             start_level(player.level, current_map)
+            if current_map == map_copy:
+                print("unfortunately they are equal")
+            print(map_copy)
         elif player.respawn_needed:
             player.respawn_needed = False
-            current_map = generate_new_map(player.level)
+            current_map = map_copy.copy()
+            print(map_copy.copy())
             start_level(player.level, current_map)
+
 
 
         for event in pygame.event.get():
