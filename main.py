@@ -20,7 +20,7 @@ Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 
 Map2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
         [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
@@ -197,6 +197,7 @@ class PacTank(pygame.sprite.Sprite):
         self.speed_y = 0
         self.score = 0
         self.lives = 3
+        self.level = 0
         self.end_time = None
         self.bullets_powerup_consumed = False
         self.start_time_bullets_powerup = None
@@ -336,6 +337,8 @@ class PacTank(pygame.sprite.Sprite):
         screen.blit(lives, [10, 600])
         score = font.render("score:" + str(self.score), True, BLACK)
         screen.blit(score, [150, 600])
+        score = font.render("level:" + str(self.level), True, BLACK)
+        screen.blit(score, [290 , 600])
         if self.speed_powerup_incrementer:
             seconds = (self.end_time - self.start_time_speed_powerup)/1000
             speed_powerup_timer = font.render("speed powerup timer: " + str(int(5-seconds)), True, BLACK)
@@ -813,11 +816,17 @@ while not done:
     if game_start == False:
         screen.fill(BLACK)
 
-        play_button = Button(150, 200, GREEN, 300, 100,  'PLAY')
+        play_button = Button(160, 200, GREEN, 300, 100,  'PLAY')
         play_button.draw()
 
-        pactank_text = font.render("PAC TANK", True, BLACK)
-        screen.blit(pactank_text, (30,30))
+        instructions_button = Button(160, 400, GREEN, 300, 100, 'INSTRUCTIONS')
+        instructions_button.draw()
+
+        cosmetics_button = Button(160, 600, GREEN, 300, 100, 'COSMETICS')
+        cosmetics_button.draw()
+
+        pactank_text = font.render("PAC TANK", True, WHITE)
+        screen.blit(pactank_text, (240,80))
 
         for event in pygame.event.get():
             mouse_pointer = pygame.mouse.get_pos()
@@ -832,13 +841,17 @@ while not done:
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
     else:
-        if level == 5:
+        if player.level == 5:
             done = True
-        if len(pacdots_group) == 0 or player.respawn_needed:
+        if len(pacdots_group) == 0:
+            player.level+=1
             player.respawn_needed = False
-            level += 1
-            current_map = generate_new_map(level)
-            start_level(level, current_map)
+            current_map = generate_new_map(player.level)
+            start_level(player.level, current_map)
+        elif player.respawn_needed:
+            player.respawn_needed = False
+            current_map = generate_new_map(player.level)
+            start_level(player.level, current_map)
 
 
         for event in pygame.event.get():
