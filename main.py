@@ -1,3 +1,5 @@
+import copy
+
 import pygame
 import random
 import time
@@ -847,7 +849,7 @@ while not done:
             player.level+=1
             player.respawn_needed = False
             current_map = generate_new_map(player.level)
-            map_copy = list(current_map)
+            map_copy = copy.deepcopy(current_map)
             print(map_copy)
             start_level(player.level, current_map)
             if current_map == map_copy:
@@ -855,7 +857,7 @@ while not done:
             print(map_copy)
         elif player.respawn_needed:
             player.respawn_needed = False
-            current_map = map_copy.copy()
+            current_map = copy.deepcopy(map_copy)
             print(map_copy.copy())
             start_level(player.level, current_map)
 
