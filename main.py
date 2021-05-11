@@ -338,9 +338,9 @@ class PacTank(pygame.sprite.Sprite):
         lives = font.render("lives:" + str(self.lives), True, BLACK)
         screen.blit(lives, [10, 600])
         score = font.render("score:" + str(self.score), True, BLACK)
-        screen.blit(score, [150, 600])
+        screen.blit(score, [200, 600])
         score = font.render("level:" + str(self.level), True, BLACK)
-        screen.blit(score, [290 , 600])
+        screen.blit(score, [390 , 600])
         if self.speed_powerup_incrementer:
             seconds = (self.end_time - self.start_time_speed_powerup)/1000
             speed_powerup_timer = font.render("speed powerup timer: " + str(int(5-seconds)), True, BLACK)
