@@ -186,6 +186,9 @@ class Bullet(pygame.sprite.Sprite):
             if group_type == walls_group:
                 self.kill()
 
+
+
+
 class PacTank(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -367,7 +370,7 @@ class PacTank(pygame.sprite.Sprite):
 
 
 
-
+ 
 
 
      
@@ -926,3 +929,4 @@ while not done:
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
+
