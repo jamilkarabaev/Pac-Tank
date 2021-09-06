@@ -116,6 +116,10 @@ green_tank_right_sprite = pygame.image.load('sprites\green_tank_right_sprite.png
 green_tank_down_sprite = pygame.image.load('sprites\green_tank_down_sprite.png')
 green_tank_left_sprite = pygame.image.load('sprites\green_tank_left_sprite.png')
 green_tank_up_sprite = pygame.image.load('sprites\green_tank_up_sprite.png')
+
+red_tank_up_sprite = pygame.image.load('sprites\_red_tank_up_sprite.png')
+blue_tank_up_sprite = pygame.image.load('sprites\_blue_tank_up_sprite.png')
+
 blinky_sprite = pygame.image.load('sprites\_red_ghost_sprite.png')
 pinky_sprite = pygame.image.load('sprites\pink_ghost_sprite.png')
 inky_sprite = pygame.image.load('sprites\_blue_ghost_sprite.png')
@@ -125,6 +129,8 @@ bullets_powerup_sprite = pygame.image.load('sprites\_bullets_powerup_sprite.png'
 single_bullet_sprite = pygame.image.load('sprites\single_bullet_sprite.png')
 invisibility_powerup_sprite = pygame.image.load('sprites\invisibility_powerup_sprite.png')
 redbrick_wall_sprite = pygame.image.load('sprites\_redbrick_wall_sprite.png')
+
+
 
 
 class Button():
@@ -150,19 +156,17 @@ class Button():
 
 
 class CosmeticsButton():
-    def __init__(self, x, y, color, width, height, image, image_width, image_height):
+    def __init__(self, x, y, color, width, height, image):
         self.x = x
         self.y = y
         self.color = color
         self.width = width
         self.height = height
         self.image = image
-        self.image_width = image_width
-        self.image_height = image_height
 
     def draw(self):
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
-        screen.blit(self.image, ((self.x + (self.width/2)) - (self.image_width/2), ((self.y + (self.height/2))) - (self.image_height/2)))
+        screen.blit(self.image, self.x + (self.width/2) - 20, self.y + (self.height/2) - 20)
 
     def mouse_is_over(self, pos):
         # where pos is a tuple of (x,y) coordinates
@@ -861,9 +865,7 @@ while not done:
 
             for event in pygame.event.get():
                 mouse_pointer = pygame.mouse.get_pos()
-                if event.type == pygame.QUIT:
-                    done = True
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     if play_button.mouse_is_over(mouse_pointer):
                         game_start = True
                     elif instructions_button.mouse_is_over(mouse_pointer):
@@ -874,36 +876,23 @@ while not done:
         elif instructions_screen_start:
             screen.fill(BLACK)
 
-            green_tank_button = Button(160, 200, GREEN, 300, 100, 'PLAY')
+            green_tank_button = CosmeticsButton(100,100, WHITE, 100, 100, green_tank_up_sprite)
             green_tank_button.draw()
 
-            blue_tank_button = Button(160, 400, GREEN, 300, 100, 'INSTRUCTIONS')
+            red_tank_button = CosmeticsButton(100, 100, WHITE, 100, 100, red_tank_up_sprite)
+            red_tank_button.draw()
+
+            blue_tank_button = CosmeticsButton(100, 100, WHITE, 100, 100, blue_tank_up_sprite)
             blue_tank_button.draw()
-
-            cosmetics_button = Button(160, 600, GREEN, 300, 100, 'COSMETICS')
-            cosmetics_button.draw()
-
-            pactank_text = font.render("PAC TANK", True, WHITE)
-            screen.blit(pactank_text, (240, 80))
-
-            for event in pygame.event.get():
-                mouse_pointer = pygame.mouse.get_pos()
-                if event.type == pygame.QUIT:
-                    done = True
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if play_button.mouse_is_over(mouse_pointer):
-                        game_start = True
-                    elif instructions_button.mouse_is_over(mouse_pointer):
-                        instructions_screen_start = True
-                    elif cosmetics_button.mouse_is_over(mouse_pointer):
-                        cosmetics_screen_start = True
 
 
 
 
 
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                done = True
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     pass
                 elif event.key == pygame.K_ESCAPE:
