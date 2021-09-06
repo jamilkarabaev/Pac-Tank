@@ -2,7 +2,6 @@ import copy
 
 import pygame
 import random
-import time
 
 Map1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
@@ -879,10 +878,10 @@ while not done:
             green_tank_button = CosmeticsButton(57,400, WHITE, 100, 100, green_tank_up_sprite)
             green_tank_button.draw()
 
-            red_tank_button = CosmeticsButton(57+100+57, 400, WHITE, 100, 100, red_tank_up_sprite)
+            red_tank_button = CosmeticsButton(57+100+57+57, 400, WHITE, 100, 100, red_tank_up_sprite)
             red_tank_button.draw()
 
-            blue_tank_button = CosmeticsButton(57+100+57+100+57, 400, WHITE, 100, 100, blue_tank_up_sprite)
+            blue_tank_button = CosmeticsButton(57+100+57+57+100+57+57, 400, WHITE, 100, 100, blue_tank_up_sprite)
             blue_tank_button.draw()
 
 
