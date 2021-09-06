@@ -810,10 +810,8 @@ level = 0
 queued_move = None
 start_time = pygame.time.get_ticks()
 game_start = False
+instructions_screen_start = False
 map_copy = None
-
-
-
 
 
 
@@ -840,6 +838,9 @@ while not done:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.mouse_is_over(mouse_pointer):
                     game_start = True
+                if instructions_button.mouse_is_over(mouse_pointer):
+                    instructions_screen_start = True
+                    
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     pass
