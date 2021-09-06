@@ -149,6 +149,29 @@ class Button():
         return False
 
 
+class CosmeticsButton():
+    def __init__(self, x, y, color, width, height, image, image_width, image_height):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.width = width
+        self.height = height
+        self.image = image
+        self.image_width = image_width
+        self.image_height = image_height
+
+    def draw(self):
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
+        screen.blit(self.image, ((self.x + (self.width/2)) - (self.image_width/2), ((self.y + (self.height/2))) - (self.image_height/2)))
+
+    def mouse_is_over(self, pos):
+        # where pos is a tuple of (x,y) coordinates
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True
+        return False
+
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, direction):
@@ -809,39 +832,78 @@ clock = pygame.time.Clock()
 level = 0
 queued_move = None
 start_time = pygame.time.get_ticks()
+map_copy = None
+
 game_start = False
 instructions_screen_start = False
-map_copy = None
+cosmetics_screen_start = True
+
 
 
 
 while not done:
     if game_start == False:
-        screen.fill(BLACK)
+        if not instructions_screen_start and not cosmetics_screen_start:
 
-        play_button = Button(160, 200, GREEN, 300, 100,  'PLAY')
-        play_button.draw()
+            screen.fill(BLACK)
 
-        instructions_button = Button(160, 400, GREEN, 300, 100, 'INSTRUCTIONS')
-        instructions_button.draw()
+            play_button = Button(160, 200, GREEN, 300, 100,  'PLAY')
+            play_button.draw()
 
-        cosmetics_button = Button(160, 600, GREEN, 300, 100, 'COSMETICS')
-        cosmetics_button.draw()
+            instructions_button = Button(160, 400, GREEN, 300, 100, 'INSTRUCTIONS')
+            instructions_button.draw()
 
-        pactank_text = font.render("PAC TANK", True, WHITE)
-        screen.blit(pactank_text, (240,80))
+            cosmetics_button = Button(160, 600, GREEN, 300, 100, 'COSMETICS')
+            cosmetics_button.draw()
+
+            pactank_text = font.render("PAC TANK", True, WHITE)
+            screen.blit(pactank_text, (240,80))
+
+            for event in pygame.event.get():
+                mouse_pointer = pygame.mouse.get_pos()
+                if event.type == pygame.QUIT:
+                    done = True
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if play_button.mouse_is_over(mouse_pointer):
+                        game_start = True
+                    elif instructions_button.mouse_is_over(mouse_pointer):
+                        instructions_screen_start = True
+                    elif cosmetics_button.mouse_is_over(mouse_pointer):
+                        cosmetics_screen_start = True
+
+        elif instructions_screen_start:
+            screen.fill(BLACK)
+
+            green_tank_button = Button(160, 200, GREEN, 300, 100, 'PLAY')
+            green_tank_button.draw()
+
+            blue_tank_button = Button(160, 400, GREEN, 300, 100, 'INSTRUCTIONS')
+            blue_tank_button.draw()
+
+            cosmetics_button = Button(160, 600, GREEN, 300, 100, 'COSMETICS')
+            cosmetics_button.draw()
+
+            pactank_text = font.render("PAC TANK", True, WHITE)
+            screen.blit(pactank_text, (240, 80))
+
+            for event in pygame.event.get():
+                mouse_pointer = pygame.mouse.get_pos()
+                if event.type == pygame.QUIT:
+                    done = True
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if play_button.mouse_is_over(mouse_pointer):
+                        game_start = True
+                    elif instructions_button.mouse_is_over(mouse_pointer):
+                        instructions_screen_start = True
+                    elif cosmetics_button.mouse_is_over(mouse_pointer):
+                        cosmetics_screen_start = True
+
+
+
+
 
         for event in pygame.event.get():
-            mouse_pointer = pygame.mouse.get_pos()
-            if event.type == pygame.QUIT:
-                done = True
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if play_button.mouse_is_over(mouse_pointer):
-                    game_start = True
-                if instructions_button.mouse_is_over(mouse_pointer):
-                    instructions_screen_start = True
-                    
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     pass
                 elif event.key == pygame.K_ESCAPE:
@@ -854,15 +916,10 @@ while not done:
             player.respawn_needed = False
             current_map = generate_new_map(player.level)
             map_copy = copy.deepcopy(current_map)
-            print(map_copy)
             start_level(player.level, current_map)
-            if current_map == map_copy:
-                print("unfortunately they are equal")
-            print(map_copy)
         elif player.respawn_needed:
             player.respawn_needed = False
             current_map = copy.deepcopy(map_copy)
-            print(map_copy.copy())
             start_level(player.level, current_map)
 
 
