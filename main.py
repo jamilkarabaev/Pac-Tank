@@ -840,7 +840,7 @@ map_copy = None
 
 game_start = False
 instructions_screen_start = False
-cosmetics_screen_start = True
+cosmetics_screen_start = False
 
 
 
