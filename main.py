@@ -872,17 +872,22 @@ while not done:
                     elif cosmetics_button.mouse_is_over(mouse_pointer):
                         cosmetics_screen_start = True
 
-        elif instructions_screen_start:
+
+        elif cosmetics_screen_start:
             screen.fill(BLACK)
 
-            green_tank_button = CosmeticsButton(57,400, WHITE, 100, 100, green_tank_up_sprite)
+            green_tank_button = CosmeticsButton(57, 300, WHITE, 100, 100, green_tank_up_sprite)
             green_tank_button.draw()
 
-            red_tank_button = CosmeticsButton(57+100+57+57, 400, WHITE, 100, 100, red_tank_up_sprite)
+            red_tank_button = CosmeticsButton(57 + 100 + 57 + 57, 300, WHITE, 100, 100, red_tank_up_sprite)
             red_tank_button.draw()
 
-            blue_tank_button = CosmeticsButton(57+100+57+57+100+57+57, 400, WHITE, 100, 100, blue_tank_up_sprite)
+            blue_tank_button = CosmeticsButton(57 + 100 + 57 + 57 + 100 + 57 + 57, 300, WHITE, 100, 100,
+                                               blue_tank_up_sprite)
             blue_tank_button.draw()
+            pactank_text = font.render("CHOOSE YOUR CHARACTER", True, WHITE)
+            screen.blit(pactank_text, (140, 80))
+            
 
 
 
