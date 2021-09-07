@@ -921,6 +921,8 @@ while not done:
                         player.set_color('r')
                     elif blue_tank_button.mouse_is_over(mouse_pointer):
                         player.set_color('r')
+                    elif back_button.mouse_is_over(mouse_pointer):
+                        cosmetics_screen_start = False
             
 
 
