@@ -116,7 +116,15 @@ green_tank_down_sprite = pygame.image.load('sprites\green_tank_down_sprite.png')
 green_tank_left_sprite = pygame.image.load('sprites\green_tank_left_sprite.png')
 green_tank_up_sprite = pygame.image.load('sprites\green_tank_up_sprite.png')
 
+
+red_tank_right_sprite = pygame.image.load('sprites\_red_tank_right_sprite.png')
+red_tank_down_sprite = pygame.image.load('sprites\_red_tank_down_sprite.png')
+red_tank_left_sprite = pygame.image.load('sprites\_red_tank_left_sprite.png')
 red_tank_up_sprite = pygame.image.load('sprites\_red_tank_up_sprite.png')
+
+blue_tank_right_sprite = pygame.image.load('sprites\_blue_tank_right_sprite.png')
+blue_tank_down_sprite = pygame.image.load('sprites\_blue_tank_down_sprite.png')
+blue_tank_left_sprite = pygame.image.load('sprites\_blue_tank_left_sprite.png')
 blue_tank_up_sprite = pygame.image.load('sprites\_blue_tank_up_sprite.png')
 
 blinky_sprite = pygame.image.load('sprites\_red_ghost_sprite.png')
@@ -216,9 +224,14 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class PacTank(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, color):
         pygame.sprite.Sprite.__init__(self)
-        self.images = [green_tank_right_sprite, green_tank_down_sprite, green_tank_left_sprite, green_tank_up_sprite]
+        if color == 'g':
+            self.images = [green_tank_right_sprite, green_tank_down_sprite, green_tank_left_sprite, green_tank_up_sprite]
+        elif color == 'r':
+            self.images = [red_tank_right_sprite, red_tank_down_sprite, red_tank_left_sprite, red_tank_up_sprite]
+        elif color == 'b':
+            self.images = [blue_tank_right_sprite, blue_tank_down_sprite, blue_tank_left_sprite, blue_tank_up_sprite]
         self.image_index = 0
         self.image = self.get_image()
         self.rect = self.image.get_rect()
@@ -240,6 +253,14 @@ class PacTank(pygame.sprite.Sprite):
         self.start_time_powerpellet_powerup = None
         self.direction = 'right'
         self.respawn_needed = False
+
+    def set_color(self, color):
+        if color == 'g':
+            self.images = [green_tank_right_sprite, green_tank_down_sprite, green_tank_left_sprite, green_tank_up_sprite]
+        elif color == 'r':
+            self.images = [red_tank_right_sprite, red_tank_down_sprite, red_tank_left_sprite, red_tank_up_sprite]
+        elif color == 'b':
+            self.images = [blue_tank_right_sprite, blue_tank_down_sprite, blue_tank_left_sprite, blue_tank_up_sprite]
 
     def reset_main_variable(self):
         self.end_time = None
@@ -467,7 +488,7 @@ class Fruit(PacDot):
 
 
 
-player = PacTank(40,40)
+player = PacTank(40,40, 'g')
 pactank_group.add(player)
 
 class Ghost(pygame.sprite.Sprite):
@@ -885,8 +906,21 @@ while not done:
             blue_tank_button = CosmeticsButton(57 + 100 + 57 + 57 + 100 + 57 + 57, 300, WHITE, 100, 100,
                                                blue_tank_up_sprite)
             blue_tank_button.draw()
+
+            back_button = Button(10,10, GREEN, 100, 30, "BACK")
+            back_button.draw()
             pactank_text = font.render("CHOOSE YOUR CHARACTER", True, WHITE)
             screen.blit(pactank_text, (140, 80))
+
+            for event in pygame.event.get():
+                mouse_pointer = pygame.mouse.get_pos()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if green_tank_button.mouse_is_over(mouse_pointer):
+                        player.set_color('g')
+                    elif red_tank_button.mouse_is_over(mouse_pointer):
+                        player.set_color('r')
+                    elif blue_tank_button.mouse_is_over(mouse_pointer):
+                        player.set_color('r')
             
 
 
