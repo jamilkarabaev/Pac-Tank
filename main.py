@@ -923,7 +923,48 @@ while not done:
                         player.set_color('r')
                     elif back_button.mouse_is_over(mouse_pointer):
                         cosmetics_screen_start = False
-            
+
+        elif instructions_screen_start:
+            screen.fill(BLACK)
+
+            back_button = Button(10, 10, GREEN, 100, 30, "BACK")
+            back_button.draw()
+
+            pactank_text = font.render("COLLECT ALL THE COINS", True, WHITE)
+            screen.blit(pactank_text, (40, 60))
+            pactank_text = font.render("FLEE FROM THE GHOSTS", True, WHITE)
+            screen.blit(pactank_text, (40, 140))
+            pactank_text = font.render("POWERUPS AND THIER FUNCTIONS:", True, WHITE)
+            screen.blit(pactank_text, (40, 220))
+            pactank_text = font.render("FRUITS GIVE YOU COINS", True, WHITE)
+            screen.blit(pactank_text, (40, 260))
+            pactank_text = font.render(
+                "INVISIBILITY MEANS GHOSTS DONT",
+                True, WHITE)
+            screen.blit(pactank_text, (40, 300))
+            pactank_text = font.render(
+                "CHASE YOU",
+                True, WHITE)
+            screen.blit(pactank_text, (40, 320))
+            pactank_text = font.render(
+                "SPEED(PETROL) MAKES YOU FAST",
+                True, WHITE)
+            screen.blit(pactank_text, (40, 360))
+            pactank_text = font.render(
+                "BULLETS LET YOU SHOOT",
+                True, WHITE)
+            screen.blit(pactank_text, (40, 400))
+            pactank_text = font.render(
+                "GO AND TOP THE SCOREBOARD!",
+                True, WHITE)
+            screen.blit(pactank_text, (40, 440))
+
+
+            for event in pygame.event.get():
+                mouse_pointer = pygame.mouse.get_pos()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if back_button.mouse_is_over(mouse_pointer):
+                        instructions_screen_start = False
 
 
 
