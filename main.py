@@ -171,6 +171,8 @@ class CosmeticsButton():
         self.height = height
         self.image = image
 
+
+
     def draw(self):
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
         screen.blit(self.image, (self.x + (self.width/2) - 20, self.y + (self.height/2) - 20))
